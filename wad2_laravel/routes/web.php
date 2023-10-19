@@ -16,23 +16,38 @@ use Inertia\Inertia;
 |
 */
 
+//PUBLIC ROUTES-------------------------------------------------------------
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
+    return to_route('login');
+    /* return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
-    ]);
+    ]); */
 });
+//Book Catalogue
+Route::get('/catalogue', function () {
+    return Inertia::render('BookCatalogue');
+})->name('catalogue');
 
+//USER RESTRICTED ROUTES-------------------------------------------------------------
+//Dashboard
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/upload-books', function () {
+    return Inertia::render('BookUpload');
+})->middleware(['auth', 'verified'])->name('upload-books');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+
+
 
 require __DIR__.'/auth.php';

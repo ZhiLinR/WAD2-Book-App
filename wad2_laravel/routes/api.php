@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DonationsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+//PUBLIC APIs------------------------------------------------------------------------------
+Route::get('get-donations', [DonationsController::class, 'query'])
+->name('donations.fetch');
+
+//USER RESTRICTED APIs------------------------------------------------------------------------------
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });

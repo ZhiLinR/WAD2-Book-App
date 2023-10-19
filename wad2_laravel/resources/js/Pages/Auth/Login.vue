@@ -7,6 +7,9 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
+import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+import LaravelLogo from '@/Components/LaravelLogo.vue';
+
 defineProps({
     canResetPassword: {
         type: Boolean,
@@ -31,64 +34,110 @@ const submit = () => {
 
 <template>
     <GuestLayout>
-        <Head title="Log in" />
+        <main>
+            <Head title="Log in" />
+            <div v-if="status">
+                {{ status }}
+            </div>
+            <video id="background-video" autoplay loop muted poster>
+                <source src="../../../assets/space.station.mp4" type="video/mp4">
+            </video>
+            <div class="card w-75 mx-auto">
+                <div class="row">
+                    <div class="col-md-6 d-lg-block d-none">
+                        Test
+                    </div>
+                    <div class="col-sm-6 d-flex align-items-center">
+                        <div class="card-body">
+                            <div class="row m-3">
+                                <div class="d-flex justify-content-start">
+                                    <div class="col">
+                                        <Link>
+                                        <LaravelLogo />
+                                        </Link>
+                                    </div>
+                                    <div class="col">
+                                        <ApplicationLogo />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row m-2">
+                                <h5>Sign into your account</h5>
+                            </div>
+                            <div class="row">
+                                <form @submit.prevent="submit">
 
-        <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
-            {{ status }}
-        </div>
+                                    <div class="row my-3 mx-1">
+                                        <InputLabel for="email" value="Email" />
 
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="email" value="Email" />
+                                        <TextInput id="email" type="email" placeholder="Email" class="form-control "
+                                            v-model="form.email" required autofocus autocomplete="username" />
 
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
+                                        <InputError class="m-1" :message="form.errors.email" />
+                                    </div>
 
-                <InputError class="mt-2" :message="form.errors.email" />
+                                    <div class="row my-3 mx-1">
+                                        <InputLabel for="password" value="Password" />
+
+                                        <TextInput id="password" type="password" class="form-control "
+                                            v-model="form.password" required autocomplete="current-password" />
+
+                                        <InputError class="m-1" :message="form.errors.password" />
+                                    </div>
+                                    <div class="row my-3 mx-1">
+                                        <div class="form-check">
+                                            <label class="flex items-center">
+                                                <Checkbox name="remember" v-model:checked="form.remember" />
+                                                <span class="form-check-label" for="remember">Remember me</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="row my-3 mx-1">
+                                        <PrimaryButton class="btn btn-light mb-4" :class="{ 'opacity-25': form.processing }"
+                                            :disabled="form.processing">
+                                            Log in
+                                        </PrimaryButton>
+                                    </div>
+                                    <div class="row">
+                                        <Link v-if="canResetPassword" :href="route('password.request')"
+                                            class="link-secondary">
+                                        Forgot your password?
+                                        </Link>
+                                    </div>
+
+
+
+
+
+                                    <p class="mb-5" style="color: #393f81;">Don't have an account? <a href="register.html"
+                                            style="color: #393f81;">Register here</a></p>
+
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
 
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="current-password"
-                />
+        </main>
 
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="block mt-4">
-                <label class="flex items-center">
-                    <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ml-2 text-sm text-gray-600">Remember me</span>
-                </label>
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                <Link
-                    v-if="canResetPassword"
-                    :href="route('password.request')"
-                    class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                    Forgot your password?
-                </Link>
-
-                <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Log in
-                </PrimaryButton>
-            </div>
-        </form>
     </GuestLayout>
 </template>
+
+<style>
+#background-video {
+    height: 100vh;
+    width: 100vw;
+    object-fit: cover;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: -1;
+    opacity: 40%;
+}
+</style>
