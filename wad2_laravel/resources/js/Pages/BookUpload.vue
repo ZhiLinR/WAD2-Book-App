@@ -1,22 +1,71 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import Card from '@/Components/Card.vue';
+import { Head, Link } from '@inertiajs/vue3';
+import Modal from '@/Components/Modal.vue';
+import UploadForm from '@/Components/UploadForm.vue';
+import axios from 'axios';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+const BASE_URL = import.meta.env.VITE_APP_URL;
 </script>
+
+<script>
+//Startup load calls
+export default {
+    data() {
+        return {
+            user_donations: [],
+        }
+    },
+    methods: {
+        getUserDonations() {
+            console.log("in getUser")
+            axios.get("/api/user/donations")
+                .then(
+                    response => {
+                        this.user_donations = response.data;
+                    }
+                )
+        }
+    },
+    beforeMount() {
+        this.getUserDonations();
+    }
+};
+</script>
+
 
 <template>
     <Head title="Book Catalogue" />
-
+    <UploadForm id="uploadFormModal" modalSize="modal-xl" />
     <AuthenticatedLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Upload Books</h2>
-        </template>
-
-       <!--  <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900">You're logged in!</div>
+        <div class="container bg-white my-5 p-5 rounded-2">
+            <div class="row">
+                <h2 class="col">
+                    My Uploads
+                </h2>
+                <div class="col-md-2">
+                    <PrimaryButton class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadFormModal">
+                        Create New Listing
+                    </PrimaryButton>
                 </div>
             </div>
-        </div> -->
+            <div class="row my-5 px-3">
+                <div class="container row " id="userDonations">
+                    <Card v-for="donation in user_donations">
+
+                        <template v-slot:cardTitle>
+                            {{ donation.bk_name }}
+                        </template>
+                        <template v-slot:cardText>
+                            By {{ donation.author }}
+                        </template>
+                    </Card>
+
+                </div>
+
+            </div>
+        </div>
+       
     </AuthenticatedLayout>
 </template>

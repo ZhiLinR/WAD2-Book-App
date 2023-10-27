@@ -41,6 +41,11 @@ Route::get('/upload-books', function () {
     return Inertia::render('BookUpload');
 })->middleware(['auth', 'verified'])->name('upload-books');
 
+Route::get('/upload-form', function () {
+    return Inertia::render('UploadForm');
+})->middleware(['auth', 'verified'])->name('new-upload');
+
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

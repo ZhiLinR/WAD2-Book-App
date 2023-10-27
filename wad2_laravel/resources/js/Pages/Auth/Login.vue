@@ -35,6 +35,7 @@ const submit = () => {
 <template>
     <GuestLayout>
         <main>
+
             <Head title="Log in" />
             <div v-if="status">
                 {{ status }}
@@ -45,7 +46,8 @@ const submit = () => {
             <div class="card w-75 mx-auto">
                 <div class="row">
                     <div class="col-md-6 d-lg-block d-none">
-                        Test
+                        <img class="rocket launch"
+                            src="https://cdn4.iconfinder.com/data/icons/whsr-january-flaticon-set/512/rocket.png">
                     </div>
                     <div class="col-sm-6 d-flex align-items-center">
                         <div class="card-body">
@@ -67,20 +69,21 @@ const submit = () => {
                             <div class="row">
                                 <form @submit.prevent="submit">
 
-                                    <div class="row my-3 mx-1">
-                                        <InputLabel for="email" value="Email" />
+                                    <div class="row my-4 mx-1">
+                                        <!-- <InputLabel for="email" value="Email" /> -->
 
                                         <TextInput id="email" type="email" placeholder="Email" class="form-control "
                                             v-model="form.email" required autofocus autocomplete="username" />
 
-                                        <InputError class="m-1" :message="form.errors.email" />
+                                        <InputError class="m-1 text-danger" :message="form.errors.email" />
                                     </div>
 
-                                    <div class="row my-3 mx-1">
-                                        <InputLabel for="password" value="Password" />
+                                    <div class="row my-4 mx-1">
+                                        <!-- <InputLabel for="password" value="Password" /> -->
 
-                                        <TextInput id="password" type="password" class="form-control "
-                                            v-model="form.password" required autocomplete="current-password" />
+                                        <TextInput id="password" type="password" placeholder="Password"
+                                            class="form-control " v-model="form.password" required
+                                            autocomplete="current-password" />
 
                                         <InputError class="m-1" :message="form.errors.password" />
                                     </div>
@@ -105,10 +108,6 @@ const submit = () => {
                                         Forgot your password?
                                         </Link>
                                     </div>
-
-
-
-
 
                                     <p class="mb-5" style="color: #393f81;">Don't have an account? <a href="register.html"
                                             style="color: #393f81;">Register here</a></p>
@@ -140,4 +139,19 @@ const submit = () => {
     z-index: -1;
     opacity: 40%;
 }
-</style>
+
+.rocket {
+    position: relative;
+    bottom: -600px;
+    animation: fly 10s .5s ease-in;
+}
+
+@keyframes fly {
+    0% {
+        bottom: -600px;
+    }
+
+    100% {
+        bottom: 100%;
+    }
+}</style>

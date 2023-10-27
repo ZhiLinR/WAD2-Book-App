@@ -10,67 +10,97 @@ import { Link } from '@inertiajs/vue3';
 const showingNavigationDropdown = ref(false);
 </script>
 
+<script>
+export default {
+    data() {
+        return {
+            contentTrigger: false
+        }
+    },
+    mounted() {
+        this.contentTrigger = true;
+    }
+}
+</script>
+
 <template>
-        <div class="container-fluid m-0 p-0 ">
-            <nav class="navbar navbar-expand-md w-auto p-3" style="background-color: #e3f2fd;">
-                <div class="container-fluid d-flex justify-content-between">
-                    <div class="p-2 flex-grow-1 bd-highlight">
-                        <Link :href="route('dashboard')" class="navbar-brand">
-                        <!-- <ApplicationLogo /> -->
-                        BookQuest
-                        </Link>
-                    </div>
-                    <div class="collapse navbar-collapse justify-content-end px-10">
-                        <ul class="navbar-nav w-auto nav-underline">
-                            <li class="nav-item">
-                                <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                                    Home
-                                </NavLink>
-                            </li>
-                            <li class="nav-item">
-                                <NavLink :href="route('catalogue')" :active="route().current('catalogue')">
-                                    Book Catalogue
-                                </NavLink>
-                            </li>
-                            <li class="nav-item">
-                                <NavLink :href="route('upload-books')" :active="route().current('upload-books')">
-                                    Upload Books
-                                </NavLink>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                                    aria-expanded="false">
-                                    {{ $page.props.auth.user.name }}
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <Link class="dropdown-item" :href="route('profile.edit')"> Profile </Link>
-                                    </li>
-                                    <li>
-                                        <Link class="dropdown-item" :href="route('logout')" method="post" as="button">
-                                        Log Out
-                                        </Link>
-                                    </li>
-
-                                </ul>
-                            </li>
-
-                        </ul>
-                    </div>
+    <div class="container-fluid m-0 p-0 ">
+        <nav class="navbar navbar-expand-md w-auto bg-white shadow">
+            <div class="container-fluid d-flex justify-content-between">
+                <div class="p-2 flex-grow-1 bd-highlight">
+                    <Link :href="route('dashboard')" class="navbar-brand">
+                    <ApplicationLogo />
+                    BookQuest
+                    </Link>
                 </div>
-            </nav>
+                <div class="collapse navbar-collapse justify-content-end px-10">
+                    <ul class="navbar-nav w-auto nav-underline">
+                        <li class="nav-item">
+                            <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                                Home
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink :href="route('catalogue')" :active="route().current('catalogue')">
+                                Book Catalogue
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink :href="route('upload-books')" :active="route().current('upload-books')">
+                                Upload Books
+                            </NavLink>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                {{ $page.props.auth.user.name }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <Link class="dropdown-item" :href="route('profile.edit')"> Profile </Link>
+                                </li>
+                                <li>
+                                    <Link class="dropdown-item" :href="route('logout')" method="post" as="button">
+                                    Log Out
+                                    </Link>
+                                </li>
 
-            <!-- Page Heading -->
-            <header class="bg-white shadow" v-if="$slots.header">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    <slot name="header" />
+                            </ul>
+                        </li>
+
+                    </ul>
                 </div>
-            </header>
+            </div>
+        </nav>
 
-            <!-- Page Content -->
-            <main>
+        <!-- Page Heading -->
+        <header class="" v-if="$slots.header">
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <slot name="header" />
+            </div>
+        </header>
+
+        <!-- Page Content -->
+
+        <main>
+            <Transition name="fade" mode="out-in" appear>
                 <slot />
-            </main>
-        </div>
-    
+            </Transition>
+        </main>
+
+
+    </div>
 </template>
+
+<style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+</style>

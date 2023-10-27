@@ -21,4 +21,36 @@ class DonationsController extends Controller
         $books = DB::table('book_donations')->get();
         return $books;
     }
+
+    public function getDonationsByUser(Request $request)
+    {
+        //print($request->user());
+        $donations = DB::table('book_donations')->get()->where("fk_user_donor", $request->user()->email);
+        return $donations;
+    }
+
+    public function postDonationByUser(Request $request)
+    {
+        DB::table('book_donations')->insert([
+            'fk_user_donor'=> $request->user()->email,
+            'bk_name'=>$request->bookName,
+            'author' => $request->author,
+            'category' => $request->category,
+            'description' => $request->description,
+        ]);
+        //print($request->author);
+        return response('Posted Successfully', 200);
+    }
+
+    public function getCategories(Request $request)
+    {
+        $categories = DB::table('book_donations')->distinct()->select('category')->get();
+        return $categories;
+    }
+
+    public function getAuthors(Request $request)
+    {
+        $authors = DB::table('book_donations')->distinct()->select('author')->get();
+        return $authors;
+    }
 }
