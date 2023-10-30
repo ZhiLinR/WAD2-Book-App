@@ -38,9 +38,10 @@
 let map,directionsService,directionsRenderer;
 let sourceAutocomplete,desAutocomplete
 let marker; 
+let sourceMarker, destinationMarker;
 
 
-
+//store all the bookstores here
 const bookstores = [
   {
     name: "Times Waterway Point",
@@ -80,7 +81,7 @@ function initMap(){
                 //display them
                 destinationInput.value = nearestBookstore ? nearestBookstore.name:'';
 
-            // Use the Geocoding API to convert coordinates into an address
+            // Use the Geocoding API to convert coordinates into an address , first instance of current location
             const geocoder = new google.maps.Geocoder();
             geocoder.geocode({ 'location': latLng }, function (results, status) {
                 if (status === 'OK' && results[0]) {
@@ -104,6 +105,7 @@ function initMap(){
                     
                     directionsService = new google.maps.DirectionsService();
                     directionsRenderer = new google.maps.DirectionsRenderer();
+                    directionsRenderer.setOptions({ suppressMarkers: true });
                     directionsRenderer.setMap(map);
 
                     sourceAutocomplete= new google.maps.places.Autocomplete(
@@ -149,6 +151,24 @@ function handleMarkerClick() {
   
 
 function calRoute(){
+    // Remove the old marker
+    if (marker) {
+        marker.setMap(null);
+        marker = null; // Set marker to null
+    }
+
+    if (sourceMarker) {
+        sourceMarker.setMap(null); // Remove the sourceMarker
+        sourceMarker = null; // Set sourceMarker to null
+    }
+
+    if (destinationMarker) {
+        destinationMarker.setMap(null); // Remove the destinationMarker
+        destinationMarker = null; // Set destinationMarker to null
+    }
+
+
+
     var source = document.getElementById('source').value;
     var dest = document.getElementById('destination').value;
 
@@ -156,17 +176,12 @@ function calRoute(){
         origin:source,
         destination:dest,
         travelMode:'DRIVING'
-
-
     }
     directionsService.route(request,function(result,status){
         if(status == "OK"){
             directionsRenderer.setDirections(result);
-            // Remove the old marker
-            if (marker) {
-                marker.setMap(null);
-            }
-            
+        
+        
             // Recalculate the nearest bookstore based on the new source location
             const geocoder = new google.maps.Geocoder();
             geocoder.geocode({ 'address': source }, function (results, status) {
@@ -175,21 +190,68 @@ function calRoute(){
                         lat: results[0].geometry.location.lat(),
                         lng: results[0].geometry.location.lng()
                     };
-                    const nearestBookstore = findNearestBookstore(newSourceLocation);
 
-                    // Update the destination input with the new nearest bookstore
-                    const destinationInput = document.getElementById('destination');
-                    destinationInput.value = nearestBookstore ? nearestBookstore.name : '';
+                    
+                    sourceMarker = new google.maps.Marker({
+                        position: newSourceLocation, // Use the new source location as the position
+                        map: map,
+                        title: 'Source',
+                        animation: google.maps.Animation.DROP
+                      });
+
+                      const nearestBookstore = findNearestBookstore(newSourceLocation);
+
+                      // Update the destination input with the new nearest bookstore
+                      const destinationInput = document.getElementById('destination');
+                      destinationInput.value = nearestBookstore ? nearestBookstore.name : '';
+
+
                 } else {
                     console.error('Geocode was not successful for the new source location.');
                 }
             });
+
+            
+
+                    
+                // Create and set the destination marker after geocoding the destination address
+                geocoder.geocode({ 'address': dest }, function (results, status) {
+                    if (status === 'OK' && results[0]) {
+                    const destinationLocation = {
+                        lat: results[0].geometry.location.lat(),
+                        lng: results[0].geometry.location.lng()
+                    };
+
+                    destinationMarker = new google.maps.Marker({
+                        position: destinationLocation,
+                        map: map,
+                        title: 'Destination',
+                        animation: google.maps.Animation.DROP
+                    });
+
+          
+
+                    } else {
+                    console.error('Geocode was not successful for the destination address.');
+                    }
+                });
+
+
+
+
+ 
+
+            
         }
 
     })
 
  
 }
+
+
+
+
 
 function findNearestBookstore(userLocation) {
     let nearestBookstore = null;
