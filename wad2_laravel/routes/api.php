@@ -29,6 +29,8 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
     Route::get('user/donations', [DonationsController::class, 'getDonationsByUser'])->name('donations.fetchByUser');
     //Post A New Donation
     Route::post('user/donations', [DonationsController::class, 'postDonationByUser'])->name('donations.postByUser');
+    //Post A New Donation
+    Route::post('location/get-Location', [LocationController::class, 'getLocation'])->name('location.fetchByUser');
 });
 
 
