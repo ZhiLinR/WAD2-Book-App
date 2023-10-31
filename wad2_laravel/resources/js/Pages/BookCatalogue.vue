@@ -4,6 +4,10 @@ import { Head } from '@inertiajs/vue3';
 </script>
 
 <script>
+//henry edit to make book readable
+import { loadGoogleBooks } from '../bookreader';
+//henry edit to make book readable
+
 export default {
     data() {
         return {
@@ -14,6 +18,16 @@ export default {
             books: [],
         }
     },
+
+    //henry edit to make book readable
+    mounted(){
+        loadGoogleBooks(() => {
+            google.books.load();
+        });
+        
+    },
+    //henry edit to make book readable
+
     methods: {
         getBooks() {
             const url = 'https://www.googleapis.com/books/v1/volumes';
