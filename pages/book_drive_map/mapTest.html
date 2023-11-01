@@ -39,21 +39,40 @@ let map,directionsService,directionsRenderer;
 let sourceAutocomplete,desAutocomplete
 let marker; 
 let sourceMarker, destinationMarker;
-
+let matchedImage ;
 
 //store all the bookstores here
 const bookstores = [
   {
     name: "Times Waterway Point",
     location: { lat: 1.4090056338031878, lng: 103.90208909688073 },
+    img: "./Img/images.jpeg"
   },
    
   {
     name: "Evernew Book Store",
     location: { lat: 1.303622146427246, lng: 103.85340253923619 },
+    img: "./Img/png-clipart-onesie-storenvy-polar-fleece-pajamas-romper-suit-psyduck-food-bird-thumbnail.png"
   },
   // Add more bookstores with their respective locations
 ];
+
+
+
+
+
+//custom icon for the marker that will appear
+
+const userOrSourceLocationIcon = {
+    url: './Img/location.png', // Replace with the URL of your custom icon
+   scaledSize: new google.maps.Size(40, 40), // Adjust the size as needed
+  };
+  
+  const DestinationMarkerIcon = {
+    url: './Img/book.png', // Replace with the URL of your custom source marker icon
+  scaledSize: new google.maps.Size(40, 40), // Adjust the size as needed
+  };
+
 
 
 function initMap(){
@@ -119,9 +138,27 @@ function initMap(){
                         position: latLng,
                         map: map, // Attach the marker to your map
                         title: "Descriptive text", // Optional title for the marker
-                        animation:google.maps.Animation.DROP
+                        animation:google.maps.Animation.DROP,
+                        icon: userOrSourceLocationIcon
                     });
+                    if(marker){
+                        // Create an info window with content to display the current location first instance
+                        const infoWindowContentCurrentLocation = `
+                        <div>
+                        <h4>Current Location:</h4>
+                        <p>${sourceInput.value}</p>
+                        </div>
+                        `;
 
+                        const sourceInfoWindow = new google.maps.InfoWindow({
+                            content: infoWindowContentCurrentLocation
+                        })
+
+                        marker.addListener('click', function() {
+                            sourceInfoWindow.open(map, marker);
+                        });
+                    }
+      
                    
                 } else {
                     console.error('Geocode was not successful for the following reason: ' + status);
@@ -140,15 +177,64 @@ function initMap(){
 
 }
 
+function updateOnClickMarker(userLocation, destinationLocation, sourceMarker, destinationMarker,bookStoreArray) {
+    // Create an info window with content to display the current location first instance
 
-function handleMarkerClick() {
-    const infowindow = new google.maps.InfoWindow({
-      content: '<div>This is the info window content</div>', // Customize the content here
+    
+
+    const infoWindowContentCurrentLocation = `
+        <div>
+            <h4>Current Location:</h4>
+            <p>${userLocation}</p>
+        </div>
+    `;
+
+    let matchingBookstore = null;
+    for (const bookstore of bookStoreArray) {
+        const bookstoreAddress = bookstore.name; // Assuming that the bookstore name is the address
+        if (bookstoreAddress === destinationLocation) { // if the bookstore addreses which is the location in the array is same as the input value in destination field
+            matchedImage = bookstore.img;
+            break; // Exit the loop when a match is found
+        }
+    }
+
+    const infoWindowContentDestination = `
+        <div>
+            <h4>Destination:</h4>
+            <p>${destinationLocation}</p>
+        </div>
+
+
+        <div class="card" style="width: 18rem;">
+            <img src="${matchedImage}" class="card-img-top" alt="...">
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+          </div>
+    `;
+
+    console.log(matchedImage);
+
+    const sourceInfoWindow = new google.maps.InfoWindow({
+        content: infoWindowContentCurrentLocation
     });
-  
-    infowindow.open(map, marker);
-  }
-  
+
+    const destinationInfoWindow = new google.maps.InfoWindow({
+        content: infoWindowContentDestination
+    });
+
+    sourceMarker.addListener('click', function () {
+        sourceInfoWindow.open(map, sourceMarker);
+    });
+
+    destinationMarker.addListener('click', function () {
+        destinationInfoWindow.open(map, destinationMarker);
+    });
+}
+
+
 
 function calRoute(){
     // Remove the old marker
@@ -196,7 +282,8 @@ function calRoute(){
                         position: newSourceLocation, // Use the new source location as the position
                         map: map,
                         title: 'Source',
-                        animation: google.maps.Animation.DROP
+                        animation: google.maps.Animation.DROP,
+                        icon: userOrSourceLocationIcon
                       });
 
                       const nearestBookstore = findNearestBookstore(newSourceLocation);
@@ -226,11 +313,14 @@ function calRoute(){
                         position: destinationLocation,
                         map: map,
                         title: 'Destination',
-                        animation: google.maps.Animation.DROP
+                        animation: google.maps.Animation.DROP,
+                        icon: DestinationMarkerIcon
                     });
-
-          
-
+                    // Check if sourceMarker and destinationMarker are defined
+                    if (sourceMarker && destinationMarker) {
+                        // Only call the event listener setup if both markers are defined
+                        updateOnClickMarker(source, dest, sourceMarker, destinationMarker,bookstores);
+                    }
                     } else {
                     console.error('Geocode was not successful for the destination address.');
                     }
@@ -293,7 +383,7 @@ function findNearestBookstore(userLocation) {
   }
   
 
-
-
 </script>
 </html>
+
+

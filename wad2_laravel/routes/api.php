@@ -48,6 +48,8 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
     Route::post('skilltree/get-read-object', [SkilltreeController::class,'getReadObj'])->name('read.fetchByUser');
     // UPdate READ DATA
     Route::post('skilltree/update-read-object', [SkilltreeController::class,'updateReadObj'])->name('read.updateByUser');
+    //Post A New Donation
+    Route::post('location/get-Location', [LocationController::class, 'getLocation'])->name('location.fetchByUser');
 });
 
 
