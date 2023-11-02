@@ -1,5 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import GoogleMapLoader from '@/Components/GoogleMapLoader.vue';
 import { Head } from '@inertiajs/vue3';
 import { Link } from '@inertiajs/vue3';
 </script>
@@ -15,6 +16,9 @@ import { Link } from '@inertiajs/vue3';
                     </span>
                 </Link>
             </div>
+            <GoogleMapLoader>
+                
+            </GoogleMapLoader>
         </AuthenticatedLayout>
 
 </template>
