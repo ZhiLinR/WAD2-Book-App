@@ -7,6 +7,10 @@ import { onBeforeMount } from 'vue';
 </script>
 
 <script>
+//henry edit to make book readable
+import { loadGoogleBooks } from '../bookreader';
+//henry edit to make book readable
+
 export default {
     data() {
         return {
@@ -19,6 +23,16 @@ export default {
             authors: [],
         }
     },
+
+    //henry edit to make book readable
+    mounted(){
+        loadGoogleBooks(() => {
+            google.books.load();
+        });
+        
+    },
+    //henry edit to make book readable
+
     methods: {
         getCategories() {
             return axios.get("/api/helpers/categories")
