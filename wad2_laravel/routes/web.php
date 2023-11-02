@@ -33,9 +33,9 @@ Route::get('/catalogue', function () {
 
 //USER RESTRICTED ROUTES-------------------------------------------------------------
 //Dashboard
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/home', function () {
+    return Inertia::render('Homepage');
+})->middleware(['auth', 'verified'])->name('homepage');
 
 Route::get('/upload-books', function () {
     return Inertia::render('BookUpload');

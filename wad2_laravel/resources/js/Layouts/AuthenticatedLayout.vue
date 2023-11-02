@@ -6,7 +6,7 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
-
+import AnimatedBackground from '@/Layouts/AnimatedBackground.vue';
 const showingNavigationDropdown = ref(false);
 </script>
 
@@ -24,83 +24,70 @@ export default {
 </script>
 
 <template>
-    <div class="container-fluid m-0 p-0 ">
-        <nav class="navbar navbar-expand-md w-auto bg-white shadow">
-            <div class="container-fluid d-flex justify-content-between">
-                <div class="p-2 flex-grow-1 bd-highlight">
-                    <Link :href="route('dashboard')" class="navbar-brand">
-                    <ApplicationLogo />
-                    BookQuest
-                    </Link>
+    <AnimatedBackground>
+        <div class="container-fluid m-0 p-0 ">
+            <nav class="navbar navbar-expand-md w-auto">
+                <div class="container-fluid d-flex justify-content-between">
+                    <div class="p-2 flex-grow-1 bd-highlight">
+                        <NavLink :href="route('homepage')" class="navbar-brand">
+                            <ApplicationLogo />
+                            BookQuest
+                        </NavLink>
+                    </div>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div id="navbarNav" class="collapse navbar-collapse justify-content-end px-10">
+                        <ul class="navbar-nav w-auto nav-underline">
+                            <li class="nav-item">
+                                <NavLink :href="route('homepage')" :active="route().current('homepage')">
+                                    Home
+                                </NavLink>
+                            </li>
+                            <li class="nav-item">
+                                <NavLink :href="route('catalogue')" :active="route().current('catalogue')">
+                                    Book Catalogue
+                                </NavLink>
+                            </li>
+                            <li class="nav-item">
+                                <NavLink :href="route('upload-books')" :active="route().current('upload-books')">
+                                    Upload Books
+                                </NavLink>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                    {{ $page.props.auth.user.name }}
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <Link class="dropdown-item" :href="route('profile.edit')"> Profile </Link>
+                                    </li>
+                                    <li>
+                                        <Link class="dropdown-item" :href="route('logout')" method="post" as="button">
+                                        Log Out
+                                        </Link>
+                                    </li>
+
+                                </ul>
+                            </li>
+
+                        </ul>
+                    </div>
                 </div>
-                <div class="collapse navbar-collapse justify-content-end px-10">
-                    <ul class="navbar-nav w-auto nav-underline">
-                        <li class="nav-item">
-                            <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                                Home
-                            </NavLink>
-                        </li>
-                        <li class="nav-item">
-                            <NavLink :href="route('catalogue')" :active="route().current('catalogue')">
-                                Book Catalogue
-                            </NavLink>
-                        </li>
-                        <li class="nav-item">
-                            <NavLink :href="route('upload-books')" :active="route().current('upload-books')">
-                                Upload Books
-                            </NavLink>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                {{ $page.props.auth.user.name }}
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <Link class="dropdown-item" :href="route('profile.edit')"> Profile </Link>
-                                </li>
-                                <li>
-                                    <Link class="dropdown-item" :href="route('logout')" method="post" as="button">
-                                    Log Out
-                                    </Link>
-                                </li>
-
-                            </ul>
-                        </li>
-
-                    </ul>
+            </nav>
+            <header class="" v-if="$slots.header">
+                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                    <slot name="header" />
                 </div>
-            </div>
-        </nav>
+            </header>
 
-        Page Heading
-        <header class="" v-if="$slots.header">
-            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                <slot name="header" />
-            </div>
-        </header>
+            <!-- Page Content -->
 
-        <!-- Page Content -->
-
-        <main>
-           
+            <main>
                 <slot />
-            
-        </main>
-
-
-    </div>
+            </main>
+        </div>
+    </AnimatedBackground>
 </template>
-
-<!-- <style>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 2s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
-</style> -->

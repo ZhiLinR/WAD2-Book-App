@@ -1,6 +1,9 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import { Scene, SceneItem } from "scenejs";
+import { typing } from "@scenejs/effects";
+import { onBeforeMount } from 'vue';
 </script>
 
 <script>
@@ -16,6 +19,8 @@ export default {
             input2: '',
             freeOnly: false,
             books: [],
+            categories: [],
+            authors: [],
         }
     },
 
@@ -29,6 +34,56 @@ export default {
     //henry edit to make book readable
 
     methods: {
+        getCategories() {
+            return axios.get("/api/helpers/categories")
+                .then(
+                    response => {
+                        /* console.log(typeof response.data);
+                        console.log(response.data); */
+                        this.categories = response.data;
+                    }
+                )
+        },
+        getAuthors() {
+            return axios.get("/api/helpers/authors")
+                .then(
+                    response => {
+                        this.authors = response.data;
+                        return response.data;
+                    }
+                )
+        },
+        changeTyping:  function (typingArray) {
+            function _makeScene(textRen){
+                let scene = new Scene({
+                    ".container span": typing({
+                        text: textRen,
+                        duration: 7,
+                    }),
+                    ".cursor": {
+                        0: { opacity: 0 },
+                        0.5: { opacity: 0 },
+                        "0.5>": { opacity: 1 },
+                        1: { opacity: 1 },
+                        options: {
+                            iterationCount: 8,
+                        }
+                    },
+                }, {
+                    iterationCount: 2,
+                    direction: "alternate",
+                    selector: true,
+                    playSpeed: 4
+                })
+                scene.play().on("ended", () => {
+                    return true;
+                });
+            }
+            setInterval(function () {
+                let index = Math.floor(Math.random() * 3)
+                _makeScene(typingArray[index].category)
+            }, 3000);
+        },
         getBooks() {
             const url = 'https://www.googleapis.com/books/v1/volumes';
             const searchTermTitle = this.input;
@@ -100,25 +155,27 @@ export default {
         },
 
     },
+    mounted: async function () {
+        await this.getCategories();
+        await this.getAuthors();
 
-
+        console.log(this.categories.length)
+        this.changeTyping(this.categories)
+    },
 }
-
-
 </script>
 
 <template>
-    <Head title="Book Catalogue" />
-
     <AuthenticatedLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Catalogue</h2>
-        </template>
-        <div class="container-fluid bg-white">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col">
                     <div class="text-center">
-                        <h1 class="mx-auto">Book Catalogue</h1>
+                        <h1 class="mx-auto">Venture into the realm of </h1>
+                        <div class="container">
+                            <span></span>
+                            <div class="cursor"></div>
+                        </div>
                         <div>
                             <input type="text" class="form-control w-50 mx-auto m-2" v-model="input"
                                 placeholder="Book Title">
@@ -186,3 +243,23 @@ export default {
     </AuthenticatedLayout>
 </template>
 
+<style>
+.container span {
+    font-size: 2rem !important;
+}
+
+.cursor {
+    display: inline-block;
+    width: 2px;
+    height: 25px;
+    background: #333;
+}
+
+h1,
+span {
+    -webkit-text-stroke: 0.3px #4B4B4B;
+    color: #FFF !important;
+    text-shadow: 2px 2px 2.5px rgba(0, 0, 0, 0.80);
+    font-family: Patrick Hand SC;
+}
+</style>
