@@ -37,6 +37,11 @@ Route::get('/home', function () {
     return Inertia::render('Homepage');
 })->middleware(['auth', 'verified'])->name('homepage');
 
+
+Route::get('/adventure-quest', function () {
+    return Inertia::render('Dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
 Route::get('/upload-books', function () {
     return Inertia::render('BookUpload');
 })->middleware(['auth', 'verified'])->name('upload-books');
