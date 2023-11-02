@@ -51,8 +51,8 @@ export default {
                                 </NavLink>
                             </li>
                             <li class="nav-item">
-                                <NavLink :href="route('upload-books')" :active="route().current('upload-books')">
-                                    Upload Books
+                                <NavLink :href="route('book-drive')" :active="route().current('book-drive')">
+                                    Donation Drive
                                 </NavLink>
                             </li>
                             <li class="nav-item dropdown">

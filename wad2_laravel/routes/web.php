@@ -42,9 +42,9 @@ Route::get('/adventure-quest', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/upload-books', function () {
-    return Inertia::render('BookUpload');
-})->middleware(['auth', 'verified'])->name('upload-books');
+Route::get('/book-drive', function () {
+    return Inertia::render('BookDrive');
+})->middleware(['auth', 'verified'])->name('book-drive');
 
 Route::get('/upload-form', function () {
     return Inertia::render('UploadForm');
