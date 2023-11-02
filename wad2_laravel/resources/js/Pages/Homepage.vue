@@ -23,7 +23,7 @@ import { Link } from '@inertiajs/vue3';
 <style>
 #btn_openSkillTree {
     --bs-btn-border-radius: 10rem !important;
-    --bs-btn-font-size: 3rem;
+    --bs-btn-font-size: 4vw;
     -webkit-text-stroke: 0.4px #4B4B4B;
     color: white;
     background-color: rgba(255, 255, 255, 0.5);
