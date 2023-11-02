@@ -2,15 +2,10 @@
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import LaravelLogo from '@/Components/LaravelLogo.vue';
 import { Link } from '@inertiajs/vue3';
+import AnimatedBackground from '@/Layouts/AnimatedBackground.vue';
 </script>
-
 <template>
-    <div class="container mx-auto p-2">
-        
-
-        <div class="container-fluid m-5">
-            
-            <slot />
-        </div>
-    </div>
+    <AnimatedBackground>
+        <slot />
+    </AnimatedBackground>
 </template>

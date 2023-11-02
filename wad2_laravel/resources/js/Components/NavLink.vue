@@ -21,6 +21,21 @@ const classes = computed(() =>
 
 <template>
     <Link :href="href" :class="classes">
-        <slot />
+    <slot />
     </Link>
 </template>
+<style>
+.nav-link {
+    -webkit-text-stroke: 0.3px #4B4B4B;
+    color: #FFF !important;
+    text-shadow: 2px 2px 2.5px rgba(0, 0, 0, 0.80);
+    font-family: Patrick Hand SC;
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+.nav-underline .nav-link.active{
+    font-weight: 400;
+}
+</style>
