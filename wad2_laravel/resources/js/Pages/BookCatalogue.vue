@@ -39,8 +39,9 @@ export default {
                     }
                 )
         },
-        changeTyping:  function (typingArray) {
-            function _makeScene(textRen){
+        changeTyping: function (typingArray) {
+            //console.log(typingArray.length)
+            function _makeScene(textRen) {
                 let scene = new Scene({
                     ".container span": typing({
                         text: textRen,
@@ -66,9 +67,13 @@ export default {
                 });
             }
             setInterval(function () {
-                let index = Math.floor(Math.random() * 3)
-                _makeScene(typingArray[index].category)
-            }, 3000);
+                let index = Math.floor(Math.random() * (typingArray.length - 1))
+                if (("category" in typingArray[index]) && typingArray[index].category != null) {
+                    _makeScene(typingArray[index].category)
+                } else if (("author" in typingArray[index]) && typingArray[index].author != null) {
+                    _makeScene(typingArray[index].author)
+                }
+            }, 5000);
         },
         getBooks() {
             const url = 'https://www.googleapis.com/books/v1/volumes';
@@ -145,15 +150,15 @@ export default {
         await this.getCategories();
         await this.getAuthors();
 
-        console.log(this.categories.length)
-        this.changeTyping(this.categories)
+        //console.log(this.categories.length)
+        this.changeTyping(this.categories.concat(this.authors))
     },
 }
 </script>
 
 <template>
     <AuthenticatedLayout>
-        <div class="container-fluid">
+        <div class="container">
             <div class="row">
                 <div class="col">
                     <div class="text-center">
@@ -162,12 +167,10 @@ export default {
                             <span></span>
                             <div class="cursor"></div>
                         </div>
-                        <div>
+                        <div class="row">
                             <input type="text" class="form-control w-50 mx-auto m-2" v-model="input"
                                 placeholder="Book Title">
-                        </div>
 
-                        <div>
                             <input type="text" class="form-control w-50 mx-auto m-2" v-model="input2" placeholder="Author">
                         </div>
 
@@ -178,10 +181,6 @@ export default {
                         <button type="submit" class="btn btn-primary m-2" @click="getBooks">Search</button>
 
                         <h3>Results for "{{ input }}" by "{{ input2 }}"</h3>
-
-                        <div>
-                            <img src="" alt="">
-                        </div>
                     </div>
                 </div>
             </div>

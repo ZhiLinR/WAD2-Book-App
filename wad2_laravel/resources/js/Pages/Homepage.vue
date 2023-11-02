@@ -8,7 +8,7 @@ import { Link } from '@inertiajs/vue3';
 
         <AuthenticatedLayout>
             <div class="position-absolute top-50 start-50 translate-middle">
-                <Link :href="route('homepage')" role="button" id="btn_openSkillTree"
+                <Link :href="route('dashboard')" role="button" id="btn_openSkillTree"
                     class="btn floating ">
                     <span> 
                         Continue Your Adventure
