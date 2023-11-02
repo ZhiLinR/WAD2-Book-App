@@ -77,10 +77,10 @@ class SkilltreeController extends Controller
     public function updateReadObj(request $request){
         $genre = $request->input("genre");
         $book_sql = $request->input("book");
-        $read = $genre +"_read";
+
         $affected = DB::table("user_pref")
         ->where("username","thanthuyaoo")
-        ->update([$read=>$book_sql]);
+        ->update([$genre=>$book_sql]);
 
         return $affected;
     }

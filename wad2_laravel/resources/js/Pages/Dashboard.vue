@@ -19,26 +19,46 @@ export default {
             romance: null,
             horror: null,
             nonfiction: null,
-            publicPath: import.meta.env.BASE_URL
+            publicPath: import.meta.env.BASE_URL,
+            books: [],
+            read: this.getReadObj("fantasy_read"),
+            fantasy_read:null,
+            mystery_read:null,
+            horror_read:null,
+            romance_read:null,
+            nonfiction_read:null
         }
     },
     mounted() {
 
 
-        Promise.all([this.data]).then(result => {
+        Promise.all([this.data,this.read]).then(result => {
             this.fantasy = JSON.parse(result[0].fantasy_data)
             this.mystery = JSON.parse(result[0].mystery_data)
             this.romance = JSON.parse(result[0].romance_data)
             this.horror = JSON.parse(result[0].horror_data)
             this.nonfiction = JSON.parse(result[0].nonfiction_data)
-            var fantasy_tree = this.createTree(this.fantasy, 'fantasy'); 
+            var fantasy_tree = this.createTree(this.fantasy, 'fantasy');
             var mystery_tree = this.createTree(this.mystery, "mystery")
             var romance_tree = this.createTree(this.romance, "romance")
             var horror_tree = this.createTree(this.horror, "horror")
             var nonfiction_tree = this.createTree(this.nonfiction, "nonfiction")
             var combine = fantasy_tree + mystery_tree + romance_tree + horror_tree + nonfiction_tree
-            this.result = combine; 
+            this.result = combine;
             this.getImg()
+            this.fantasy_read = JSON.parse(result[0].fantasy_read)
+            this.mystery_read = JSON.parse(result[0].mystery_read)
+            this.horror_read = JSON.parse(result[0].horror_read)
+            this.romance_read = JSON.parse(result[0].romance_read)
+            this.nonfiction_read = JSON.parse(result[0].nonfiction_read)
+            
+
+            // console.log(this.read)
+            // this.fantasy_read = JSON.parse(result[1].fantasy_read)
+            // this.mystery_read = JSON.parse(result[1].mystery_read)
+            // this.horror_read = JSON.parse(result[1].horror_read)
+            // this.romance_read = JSON.parse(result[1].romance_read)
+            // this.nonfiction_read = JSON.parse(result[1].nonfiction_read)
 
 
 
@@ -53,7 +73,7 @@ export default {
         createTree(item, id) {
             const { left, right, head } = item
             var number = Math.floor(Math.random() * (12 - 1 + 1)) + 1
-            var add = id+number
+            var add = id + number
             var final = `<li>
         <a href="javascript:void(0)" id="click"><img src= '/${id}/gif/${add}.gif' class=${id}width ='20px' height ='20px'" id ="click">
         <br><span width='20px' id="click" class =${id}>${head}</span></a>`
@@ -71,45 +91,46 @@ export default {
             final += `</li>`
             return final
 
-        }, 
+        },
         getImg() {
             var main = document.getElementById("item")
             var img = main.getElementsByTagName("img")
             var number = Math.floor(Math.random() * (12 - 1 + 1)) + 1
-           
-            for (var i=0;i<img.length;i++) {
+
+            for (var i = 0; i < img.length; i++) {
 
                 var identifier = img.className
-                var rando = identifier+number
+                var rando = identifier + number
 
-                img[i].src="/"+identifier+"/gif/"+rando+".gif"
+                img[i].src = "/" + identifier + "/gif/" + rando + ".gif"
 
-                
+
             }
         },
 
         async addItem(item, identifier) {
 
             let data, url;
+            item = item.toLowerCase()
 
             switch (identifier) {
-                case "Fantasy":
+                case "fantasy":
                     data = await this.fantasy;
                     url = "/api/skilltree/update-fantasy-object";
                     break;
-                case "Mystery":
+                case "mystery":
                     data = await this.mystery;
                     url = "/api/skilltree/update-mystery-object";
                     break;
-                case "Romance":
+                case "romance":
                     data = await this.romance;
                     url = "/api/skilltree/update-romance-object";
                     break;
-                case "Nonfiction":
+                case "nonfiction":
                     data = await this.nonfiction;
                     url = "/api/skilltree/update-nonfiction-object";
                     break;
-                case "Horror":
+                case "horror":
                     data = await this.horror;
                     url = "/api/skilltree/update-horror-object";
                     break;
@@ -117,50 +138,91 @@ export default {
                     console.log("Invalid identifier");
                     return;
             }
+
             var node = this.bfs(data, item);
-            if(node != false){
-            node.left = { head: "Own reco" };
-            node.right = { head: "Testing Computer Software" };
-
-            var sql = JSON.stringify(data);
+        
+            console.log(node)
+            if (node != false) {
 
 
-            this.sendData(url, sql);
-            location.reload()}
-            else{
+
+
+                const newurl = 'https://www.googleapis.com/books/v1/volumes';
+            const searchTermSubject = identifier; //e.g fantasy
+
+            var thuyaArr = []
+
+            var query = `subject:${searchTermSubject}`
+
+            const params = {
+                q: query,
+                maxResults: 40
+            }
+
+            axios.get(newurl, {
+                params
+            })
+
+                .then(response => {
+                    var forty_data = response.data.items
+                    for (var arr of forty_data) {
+                        let rating = arr.volumeInfo.averageRating
+                        let word_count = arr.volumeInfo.title.length
+                        if (rating >= 4.0&& word_count<=25) {
+                            thuyaArr.push(arr)
+                        }
+                    }
+
+                    // var recommendation=""
+                    // while(recommendation in )
+
+                    let randomIndex = Math.floor(Math.random() * thuyaArr.length);
+
+                    let recommendation = thuyaArr[randomIndex]
+                    var book_name =recommendation.volumeInfo.title
+                    node.left = { head: book_name };
+                node.right = { head: "Own reco" };
+                var sql = JSON.stringify(data);
+                this.sendData(url, sql);
+                this.updateReadList(identifier,item)
+                location.reload()
+                
+                })
+            }
+            else {
                 alert("Please select another node")
             }
         },
         addingBook() {
-            
+
             var title = document.getElementById("cardtitle")
             var identifier = title.className
-            if(identifier.search("fantasy")!=-1){
-                
-                
-                this.addItem(title.innerHTML,"Fantasy")
+            if (identifier.search("fantasy") != -1) {
+
+
+                this.addItem(title.innerHTML, "fantasy")
             }
-            else if(identifier.search("horror")!=-1){
-               
-                
-                this.addItem(title.innerHTML,"Horror")
+            else if (identifier.search("horror") != -1) {
+
+
+                this.addItem(title.innerHTML, "horror")
             }
-            else if(identifier.search("nonfiction")!=-1){
-                
-                this.addItem(title.innerHTML,"Nonfiction")
+            else if (identifier.search("nonfiction") != -1) {
+
+                this.addItem(title.innerHTML, "nonfiction")
             }
-            else if(identifier.search("romance")!=-1){
-                
-                
-                this.addItem(title.innerHTML,"Romance")
+            else if (identifier.search("romance") != -1) {
+
+
+                this.addItem(title.innerHTML, "romance")
             }
-            else if(identifier.search("mystery")!=-1){
-                
-                
-                this.addItem(title.innerHTML,"Mystery")
+            else if (identifier.search("mystery") != -1) {
+
+
+                this.addItem(title.innerHTML, "mystery")
             }
 
-            
+
 
         },
 
@@ -182,21 +244,30 @@ export default {
 
 
         bfs(obj, find) {
+            var counter = 0
             var queue = [obj]
-
             while (queue.length > 0) {
+                
+
                 var check = queue.shift()
                 console.log(check)
                 var headChecker = check.head.replace("'", "")
                 var findChecker = find.replace("'", "")
+                var headChecker= headChecker.replace("-"," ")
+                var findChecker= findChecker.replace("-"," ")
 
-                if (headChecker == findChecker) {
+                console.log(headChecker)
+                console.log(findChecker)
+                
+                if (headChecker.toLowerCase() == findChecker.toLowerCase()) {
+                    counter ++
+                    console.log(counter)
                     if (find == "Own Reco") {
                         alert("This is an empty node")
                     }
                     else if (check.hasOwnProperty("left") || check.hasOwnProperty("right")) {
-                        alert("Please select another node")
-                        
+                        alert("Please select another node 1211")
+
                     }
                     else {
                         return check
@@ -228,6 +299,10 @@ export default {
             document.getElementById("mySidenav").style.width = "0"
         }
         ,
+        closeNav1() {
+            document.getElementById("mySidenav1").style.width = "0"
+        }
+        ,
 
 
 
@@ -238,7 +313,7 @@ export default {
                     var span = event.target.parentNode.getElementsByTagName("span")[0]
                     var genre = span.className
                     var book = span.innerHTML
-                   
+
                 }
 
                 else {
@@ -247,44 +322,44 @@ export default {
 
                 }
             }
-            if ((book === "Own reco"  || event.target.localName == "li"|| event.target.localName == "ul")) {
+            if ((book === "Own reco" || event.target.localName == "li" || event.target.localName == "ul")) {
 
                 this.closeNav()
             }
-            else if(book == "Fantasy" || book == "Mystery" || book == "Romance" || book == "Nonfiction" || book == "Horror"){
-                var url ="/api/skilltree/get-read-object"
+            else if (book == "fantasy" || book == "mystery" || book == "romance" || book == "nonfiction" || book == "horror") {
+                var url = "/api/skilltree/get-read-object"
                 book = book.toLowerCase()
-                var book_read =book+"_read"
-       
-                axios.post(url, {
-                genre: book_read
-                })
-                .then(response => {
-                    var read = response.data
-                    var list = JSON.parse(read)
-                    
-                    var count = 0
-                    for(var i=0;i<list.length;i++){
-                        count+=1
-                    }
-                    var sidenav = document.getElementById("mySidenav")
-                sidenav.style.width = "300px"
-                var thumbnail = document.getElementById("thumbnail")
-                var title = document.getElementById("cardtitle")
-                var desc = document.getElementById("carddesc")
-                var button = document.getElementById("completed")
-                var left = 10 -count
-                if(left<0){
-                    left ="completed"
-                }
-                button.style.display ="none"
-                title.innerHTML =`${book}`
-                desc.innerHTML =   `Number of ${book} read: ${count}<br> Number of books till Animations: ${left}`
-                thumbnail.src =`/main/${book}.jpeg`
-                 })
-                .catch(error => {
+                var book_read = book + "_read"
 
+                axios.post(url, {
+                    genre: book_read
                 })
+                    .then(response => {
+                        var read = response.data
+                        var list = JSON.parse(read)
+
+                        var count = 0
+                        for (var i = 0; i < list.length; i++) {
+                            count += 1
+                        }
+                        var sidenav = document.getElementById("mySidenav")
+                        sidenav.style.width = "300px"
+                        var thumbnail = document.getElementById("thumbnail")
+                        var title = document.getElementById("cardtitle")
+                        var desc = document.getElementById("carddesc")
+                        var button = document.getElementById("completed")
+                        var left = 5 - count
+                        if (left < 0) {
+                            left = "completed"
+                        }
+                        button.style.display = "none"
+                        title.innerHTML = `${book}`
+                        desc.innerHTML = `Number of ${book} read: ${count}<br> Number of books till Animations: ${left}`
+                        thumbnail.src = `/main/${book}.jpeg`
+                    })
+                    .catch(error => {
+
+                    })
 
 
             }
@@ -308,11 +383,11 @@ export default {
                         thumbnail.src = img
                         var title = document.getElementById("cardtitle")
                         var desc = document.getElementById("carddesc")
-                        title.className ="card-title "+genre
+                        title.className = "card-title " + genre
                         title.innerHTML = cardtitle
                         desc.innerHTML = carddesc
                         var button = document.getElementById("completed")
-                button.style.display =""
+                        button.style.display = ""
 
                     })
 
@@ -321,150 +396,255 @@ export default {
                     });
             }
         },
+        getBooks() {
+            var genre = document.getElementById("genre")
+            const url = 'https://www.googleapis.com/books/v1/volumes';
+            const searchTermTitle = document.getElementById("bookname").value
+            const searchTermAuthor = document.getElementById("author").value
+            if(genre.value==""||(searchTermTitle==""&&searchTermAuthor=="")){
+                alert("Please fill in genre and at least title/author")
+                return""
+            }
+            else if(genre.value=="fantasy"||genre.value=="mystery"||genre.value=="horror"||genre.value=="romance"||genre.value=="nonfiction") {
+            var sidenav = document.getElementById("mySidenav1")
+            var closenav = document.getElementById("mySidenav")
+            closenav.style.width="0px"
+            sidenav.style.width = "300px"
+            let query = '';
+            // const searchParam = this.searchby === 'Title' ? 'intitle' : 'inauthor';
 
-
-
-    
-
-
-    manualSearch(event) {
-        var book = document.getElementById("bookname").value
-        var author = document.getElementById("author").value
-        console.log(event.type)
-        const url = 'https://www.googleapis.com/books/v1/volumes'
-
-        if (book == "") {
-            alert("Please key in a book")
-        }
-        else {
             //user knows title and author
-            if (author != "") {
-                var query = `intitle:${book} inauthor:${author}`;
+            if (this.input != '' && this.input2 != '') {
+                query = `intitle:${searchTermTitle} inauthor:${searchTermAuthor}`;
             }
             //user knows title but NOT author
             else if (this.input != '' && this.input2 == '') {
-                var query = `intitle:${book}`;
+                query = `intitle:${searchTermTitle}`;
             }
+            // user knows author but NOT title
+            else if (this.input == '' && this.input2 != '') {
+                query = `inauthor:${searchTermAuthor}`;
+            }
+
+
             const params = {
                 q: query,
-                maxResults: 20
+                filter: this.freeOnly ? 'free-ebooks' : undefined,
+                maxResults: 10
             };
+
             axios.get(url, {
                 params
             })
                 .then(response => {
-                    var card =''
-                    var booklist = response.data.items
-                    console.log(booklist)
-                    var sidenav = document.getElementById("mySidenav")
-                    sidenav.style.width = "300px"
-                    
-                   
-                    for(var i=0;i<booklist.list;i++){
-                        var img = bookslist[i].volumeInfo.imageLinks.thumbnail
-                        card +=`<div class="card" style="width: 18rem;">
-<img class="card-img-top" src="${img}" alt="Card image cap">
-  <div class="card-body">
-    <h5 class="card-title">Card title</h5>
-    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-    <a href="#" class="btn btn-primary">Go somewhere</a>
-  </div>
-</div>`
+                    console.log(response)
+                    if (response.data.items) {
+                        this.books = response.data.items.map(item => {
+                            const volumeInfo = item.volumeInfo;
+                            console.log(item)
+                            return {
+                                id: item.id,
+                                title: volumeInfo.title,
+                                author: volumeInfo.authors ? volumeInfo.authors.join(', ') : 'Unknown',
+                                isbn: volumeInfo.industryIdentifiers ? volumeInfo.industryIdentifiers[0].identifier : 'Unknown',
+                                publishedYear: volumeInfo.publishedDate,
+                                coverImage: volumeInfo.imageLinks ? volumeInfo.imageLinks.thumbnail : 'No Image',
+                                category: volumeInfo.categories ? volumeInfo.categories[0] : 'Unidentified',
+                                embedded: item.accessInfo.embeddable ? item.accessInfo.embeddable : false,
+                            };
+                        });
                     }
-                    console.log(card)
-                    var carddiv = document.getElementById("card")
-                    carddiv.innerHTML =card
+                    else {
+                        alert('Oops! Unable to find book!')
+                    }
 
                 })
 
                 .catch(error => {
                     console.error(error);
                 });
-
-
-        }
+        }else {
+                console.log(genre.value)
+                alert("Please only key in fantasy,mystery,horror or romance")
+            }
+    
+    
     },
 
-    bfsAndUpdate(node, target, replacement) {
-        const queue = [node];
-
-        while (queue.length > 0) {
-            const currentNode = queue.shift();
-
-            if (currentNode.head === target) {
-                // Update the node when found
-                currentNode.head = replacement.head;
-                currentNode.left = replacement.left;
-                currentNode.right = replacement.right;
-                return;
-            }
-
-            if (currentNode.left) {
-                queue.push(currentNode.left);
-            }
-            if (currentNode.right) {
-                queue.push(currentNode.right);
-            }
-        }
-    }
-    ,
-    addOwnReco() {
-        var horror_tree = this.horror
-
-        var target = "Own reco"
-        const replacement = {
-            head: "test",
-            left: { head: "left" },
-            right: { head: "right" }
-        };
-
-        this.bfsAndUpdate(horror_tree, target, replacement)
-        const updated = JSON.stringify(horror_tree)
-        var url = "/api/skilltree/update-horror-object"
-        this.sendData(url, updated)
-        // location.reload()
-
-
-    }
-    ,
-
-    getRandomSubject(genre) {
-        const url = 'https://www.googleapis.com/books/v1/volumes';
-        const searchTermSubject = genre; //change to that specific book genre based on what is clicked
-
-        var query = `subject:${searchTermSubject}`
-
-        const params = {
-            q: query,
-            maxResults: 40
-        }
-
-        axios.get(url, {
-            params
-        })
-
-            .then(response => {
-                var data = response.data.items
-
-
-                let randomIndex = Math.floor(Math.random() * 20);
-
-                if (data[randomIndex]) {
-                    let item = data[randomIndex]
-                    let title = item.volumeInfo.title
-                    let desc = item.volumeInfo.description
-                    let image = item.volumeInfo.imageLinks.thumbnail
 
 
 
+
+
+
+
+        bfsAndUpdate(node, target, replacement) {
+            const queue = [node];
+
+            while (queue.length > 0) {
+                const currentNode = queue.shift();
+
+                if (currentNode.head === target) {
+                    // Update the node when found
+                    currentNode.head = replacement.head;
+                    currentNode.left = replacement.left;
+                    currentNode.right = replacement.right;
+                    return;
                 }
+
+                if (currentNode.left) {
+                    queue.push(currentNode.left);
+                }
+                if (currentNode.right) {
+                    queue.push(currentNode.right);
+                }
+            }
+        }
+        
+        ,
+        addOwnReco(genre, title) {
+            if (genre == "fantasy") {
+                var tree = this.fantasy
+            }
+            else if (genre == "mystery") {
+                var tree = this.mystery
+            }
+            else if (genre == "horror") {
+                var tree = this.horror
+            }
+            else if (genre == "romance") {
+                var tree = this.romance
+            }
+            else if (genre == "nonfiction") {
+                var tree = this.nonfiction
+            }
+
+            const url = 'https://www.googleapis.com/books/v1/volumes';
+            const searchTermSubject = genre; //e.g fantasy
+
+            var thuyaArr = []
+
+            var query = `subject:${searchTermSubject}`
+            var check_if_exist = false
+
+            const params = {
+                q: query,
+                maxResults: 40
+            }
+
+            axios.get(url, {
+                params
             })
-    },
+
+                .then(response => {
+                    var data = response.data.items
+                    for (var arr of data) {
+                        let rating = arr.volumeInfo.averageRating   
+                        let word_count = arr.volumeInfo.title.length
+                        if ( rating >= 4.0&& word_count<=25) {
+                            thuyaArr.push(arr)
+                        }
+                    }
+
+                    console.log(thuyaArr)
+
+                    let randomIndex = Math.floor(Math.random() * thuyaArr.length);
+
+                    let recommendation = thuyaArr[randomIndex]
+                    var book_name =recommendation.volumeInfo.title
+                    book_name = book_name.toLowerCase()
+                    var target = "Own reco"
+                const replacement = {
+                head: title.toLowerCase(),
+                left: { head: book_name},
+                right: { head: "Own reco" }
+            };
+
+            this.bfsAndUpdate(tree, target, replacement)
+            const updated = JSON.stringify(tree)
+            var url = `/api/skilltree/update-${genre}-object`
+            this.sendData(url, updated)
+            location.reload()
+                })
+
+
+        }
+        ,
+
+        
+
+        manualAdd(event){
+            var title = event.target.parentNode.parentNode.getElementsByTagName("h5")[0].innerText
+            var genre = document.getElementById("genre").value
+            this.updateReadList(genre,title)
+            
+            
+        },
+
+        updateReadList(genre1, title) {
+            var url = "/api/skilltree/get-read-object"
+            var title = title.toLowerCase()
+            var genre = genre1.toLowerCase()
+            var book_read = genre + "_read"
+            axios.post(url, {
+                genre: book_read
+            })
+                .then((result) => {
+                    var read = result.data
+                    console.log("test")
+                    var list = JSON.parse(read)
+                    var url = "/api/skilltree/update-read-object"
+                    list.push(title)
+                    list = JSON.stringify(list)
+                   
+                    axios.post(url, {
+                        genre: book_read,
+                        book: list
+                    })
+                        .then(response => {
+                            this.addOwnReco(genre,title)
+                        })
+                        .catch(error => {
+                            console.log(error)
+                        })
+
+                }).catch((err) => {
+
+                });
 
 
 
 
-}}
+
+
+
+        },
+
+        getReadObj(genre){
+            var url = "/api/skilltree/get-read-object"
+            return axios.post(url, {
+                genre: genre
+            })
+                .then((result) => {
+                    return result.data[0]
+                })
+        },
+        check(){
+            console.log(this.fantasy_read)
+            console.log(this.mystery_read)
+            console.log(this.horror_read)
+            console.log(this.nonfiction_read)
+            console.log(this.romance_read)
+        }
+
+
+
+
+
+
+    }
+
+}
 
 
 // var addtree = document.getElementById("item")
@@ -502,33 +682,62 @@ export default {
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">Catalogue</h2>
         </template>
         <div id="mySidenav" class="sidenav">
-        <a href="javascript:void(0)" class="closebtn" @click="closeNav">&times;</a>
-        <div class="container" style="display: flex; justify-content: center;">
-            <!-- card -->
-            <div class="card" id="card" style="max-width: 18rem;">
-                <img id ='thumbnail' class="card-img-top" alt="Card image cap" max-width="300px" >
-                <div class="card-body">
-                  <h5 class="card-title" id ="cardtitle"></h5>
-                  <p class="card-text" id = "carddesc">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                  <a href="#" class="btn btn-primary" @click="addingBook" id="completed"><span style="text-align: center;">I have COMPLETED IT!</span></a>
-                </div>
-              </div>
+            <a href="javascript:void(0)" class="closebtn" @click="closeNav">&times;</a>
+            <div class="container" style="display: flex; justify-content: center;">
+                <!-- card -->
+                <div class="card" id="card" style="max-width: 18rem;">
+                    <img id ='thumbnail' class="card-img-top" alt="Card image cap" max-width="300px" >
+                    <div class="card-body">
+                      <h5 class="card-title" id ="cardtitle"></h5>
+                      <p class="card-text" id = "carddesc">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                      <a href="#" class="btn btn-primary" @click="addingBook" id="completed"><span style="text-align: center;">I have COMPLETED IT!</span></a>
+                    </div>
+                  </div>
 
+                </div>
+
+            
+            
+
+            
+          </div>
+          <div id="mySidenav1" class="sidenav">
+            <a href="javascript:void(0)" class="closebtn" @click="closeNav1">&times;</a>
+            <div class="container" style="display: flex; justify-content: center;">
+                <div class="card" id="card" style="max-width: 18rem;">
+
+        <div v-for="book in books" :key="book.id">
+        <div class="row">
+            <div class="col">
+                <div class="card img-fluid" width="300">
+
+                    <img :src="book.coverImage" alt="IMAGE NOT AVAILABLE" width="250">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ book.title }}</h5>
+                        <p class="card-text">Author: {{ book.author }}</p>
+                        <p class="card-text">Genre: {{ book.category }}</p>
+                        <p class="card-text">ISBN: {{ book.isbn }}</p>
+                        <p class="card-text">ID: {{ book.id }}</p>
+                        <p class="card-text">Published Year: {{ book.publishedYear }}</p>
+                        <p><button type="button" class="btn btn-dark" @click="manualAdd">I have Read!</button></p>
+                    </div>
+                </div>
+            </div>
             </div>
 
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-8 order-md-first">
+    <div id="viewerCanvas" style="width: 100%; height: 100%"></div>
+</div>
+
+</div>
             
-            <!-- card2 -->
-            <div class="card" style="max-width: 18rem;">
-                <img id ='thumbnail' class="card-img-top" alt="Card image cap" max-width="300px" >
-                <div class="card-body">
-                  <h5 class="card-title" id ="cardtitle"></h5>
-                  <p class="card-text" id = "carddesc">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                  <a href="#" class="btn btn-primary" @click="addingBook" id="completed"><span style="text-align: center;">I have COMPLETED IT!</span></a>
-                </div>
-              </div>
+            
 
             
-      </div>
 
 
 
@@ -548,25 +757,27 @@ export default {
         </div>
     </div>`
 </div>
-<div class="container-fluid">
-    <div class="input-group mb-3 col-3">
-        <input id ="bookname" type="text" class="form-control" placeholder="Book Name" aria-label="Recipient's username" aria-describedby="basic-addon2">
-        <input id ="author" type="text" class="form-control" placeholder="Author" aria-label="Recipient's username" aria-describedby="basic-addon2">
-        <div class="input-group-append">
-          <button class="btn btn-outline-secondary" type="button" @click="manualSearch" >Search</button>
-        </div>
-      </div>
+<div class="container-fluid text-center">
+    <input type="text" class="form-control w-50 mx-auto m-2"  placeholder="Book Name" id="bookname">
+    <input type="text" class="form-control w-50 mx-auto m-2"  placeholder="Author" id="author">
+    <input type="text" class="form-control w-50 mx-auto m-2"  placeholder="Please key in either fantasy,mystery,romance,horror,nonfiction" id="genre">
+    <button type="button" class="btn btn-primary m-2" @click="getBooks">Search</button>
+    <button type="button" class="btn btn-primary m-2" @click="check">tester</button>
+    
+        <!-- <input id ="bookname" type="text" class="form-control col-3" placeholder="Book Name" aria-label="Recipient's username" aria-describedby="basic-addon2">
+        <input id ="author" type="text" class="form-control col-3" placeholder="Author" aria-label="Recipient's username" aria-describedby="basic-addon2">
+        <input id ="genre" type="text" class="form-control col-3" placeholder="Please key in either fantasy,mystery,romance,horror,nonfiction" aria-label="Recipient's username" aria-describedby="basic-addon2"> -->
+
+
 </div>
 
 
-<button type="button" class="btn btn-light" @click="getRandomSubject">Light</button>
+
     </AuthenticatedLayout>
 </template>
 
 <style>
-body {
-    background-color: rgb(34, 33, 33);
-}
+
 
 
 * {
@@ -721,10 +932,21 @@ a:hover{
     transition: margin-left .5s;
     padding: 20px;
   }
-  
+  #animatedBackground{
+    background-repeat: repeat-y;
+    height: 100% !important;
+    background-size: contain
+}
   /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
   @media screen and (max-height: 450px) {
     .sidenav {padding-top: 15px;}
     .sidenav a {font-size: 18px;}
   }
+ 
 </style>
+
+
+
+
+
+
