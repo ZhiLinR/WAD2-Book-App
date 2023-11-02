@@ -73,7 +73,7 @@ export default {
             </div>
         </nav>
 
-        <!-- Page Heading -->
+        Page Heading
         <header class="" v-if="$slots.header">
             <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                 <slot name="header" />
@@ -83,16 +83,16 @@ export default {
         <!-- Page Content -->
 
         <main>
-            <Transition name="fade" mode="out-in" appear>
+           
                 <slot />
-            </Transition>
+            
         </main>
 
 
     </div>
 </template>
 
-<style>
+<!-- <style>
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 2s ease;
@@ -103,4 +103,4 @@ export default {
   opacity: 0;
 }
 
-</style>
+</style> -->
