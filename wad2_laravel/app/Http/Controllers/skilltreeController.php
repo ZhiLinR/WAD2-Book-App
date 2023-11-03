@@ -16,16 +16,16 @@ use Inertia\Response;
 
 class SkilltreeController extends Controller
 {
-    public function getDatabaseObj()
+    public function getDatabaseObj(Request $request)
     {
-        $books = DB::table('user_pref')->get()->where("username","thanthuyaoo");
+        $books = DB::table('user_pref')->get()->where("username", $request->user()->email);
         return $books;
     }
     public function updateFantasyObj(Request $request){
         $book = $request->input('book');
 
         $affected = DB::table("user_pref")
-        ->where("username","thanthuyaoo")
+        ->where("username", $request->user()->email)
         ->update(["fantasy_data"=>$book]);
 
         return $affected;
@@ -35,7 +35,7 @@ class SkilltreeController extends Controller
         $book = $request->input('book');
 
         $affected = DB::table("user_pref")
-        ->where("username","thanthuyaoo")
+        ->where("username", $request->user()->email)
         ->update(["mystery_data"=>$book]);
         
         return $affected;
@@ -44,7 +44,7 @@ class SkilltreeController extends Controller
         $book = $request->input('book');
 
         $affected = DB::table("user_pref")
-        ->where("username","thanthuyaoo")
+        ->where("username", $request->user()->email)
         ->update(["romance_data"=>$book]);
         
         return $affected;
@@ -53,7 +53,7 @@ class SkilltreeController extends Controller
         $book = $request->input('book');
 
         $affected = DB::table("user_pref")
-        ->where("username","thanthuyaoo")
+        ->where("username", $request->user()->email)
         ->update(["nonfiction_data"=>$book]);
         
         return $affected;
@@ -62,7 +62,7 @@ class SkilltreeController extends Controller
         $book = $request->input('book');
 
         $affected = DB::table("user_pref")
-        ->where("username","thanthuyaoo")
+        ->where("username", $request->user()->email)
         ->update(["horror_data"=>$book]);
         
         return $affected;
@@ -70,7 +70,7 @@ class SkilltreeController extends Controller
 
     public function getReadObj(request $request){
         $genre = $request->input("genre");
-        $books = DB::table('user_pref')->where("username","thanthuyaoo")->pluck($genre);
+        $books = DB::table('user_pref')->where("username", $request->user()->email)->pluck($genre);
         return $books;
     }
 
@@ -79,7 +79,7 @@ class SkilltreeController extends Controller
         $book_sql = $request->input("book");
 
         $affected = DB::table("user_pref")
-        ->where("username","thanthuyaoo")
+        ->where("username", $request->user()->email)
         ->update([$genre=>$book_sql]);
 
         return $affected;
