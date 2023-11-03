@@ -8,9 +8,10 @@
     <!-- Fonts -->
     <!-- <link rel="preconnect" href="https://fonts.bunny.net"> -->
     <!--     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" /> -->
-    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/scss/assets/css/custom_bootstrap.css" >
+    <!-- <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css"> -->
+   <!--  <link rel="stylesheet" href="/scss/assets/css/custom_bootstrap.css" > -->
     
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand+SC&display=swap" rel="stylesheet">
