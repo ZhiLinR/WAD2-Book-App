@@ -16,6 +16,7 @@ import { Link } from '@inertiajs/vue3';
                     </span>
                 </Link>
             </div>
+     
         </AuthenticatedLayout>
 
 </template>
