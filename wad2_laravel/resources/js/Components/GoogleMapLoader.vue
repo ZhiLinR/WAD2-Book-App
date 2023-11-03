@@ -2,19 +2,23 @@
 
 <script>
 export default {
-  props: {
-    destinationCoord: Object,
-  },
+  // props: {
+  //   destinationCoord: Object,
+  // },
   data() {
     return {
       userSourceCoordinate:null,
+      userDestinationCoordinate:null,
       center: null,
       dbLocationData: [],
       closestDistance:null,
       closestDistanceCoordinate:null,
       searchedSourceCoord:null,
-      path: []
-
+      path: [],
+        manualIndex:1,
+        manualIndex2:2,
+        openedMarkerID1: null,
+        openedMarkerID2: null,
 
       // markers: [
       //   {
@@ -28,20 +32,56 @@ export default {
 
     }
   },methods:{
-    getDatabaseLocationData(){
-          for (let index = 0; ; index++) {
-          const key = `DBlocationJson${index}`;
-          const storedData = sessionStorage.getItem(key);
-          if (storedData) {
-            this.dbLocationData.push(JSON.parse(storedData));
-          } else {
-            break; // Stop when no more data is found
-          }
-        }
-
+    openMarker1(id) {
+       this.openedMarkerID1 = id
     },
-    getSearchedSourceCoord(){
- 
+    openMarker2(id) {
+       this.openedMarkerID2 = id
+    },
+    getDatabaseLocationData() {
+      let index = 0;
+      while (true) {
+        const key = `DBlocationJson${index}`;
+        const storedData = sessionStorage.getItem(key);
+        if (storedData) {
+          this.dbLocationData.push(JSON.parse(storedData));
+          
+          index++; // Move on to the next item
+        } else {
+          break; // Stop when no more data is found
+        }
+        
+      }
+    }
+,
+    getUpdatedSourceCoordAndDestinationCoord(){
+      console.log("in getUpdated")
+      const updatedSourceCoordData = sessionStorage.getItem('updateSourceCoordinate');
+            console.log(updatedSourceCoordData)
+            
+            if(updatedSourceCoordData){
+              const updateDataToUse = JSON.parse(updatedSourceCoordData);
+              //update userSource COORD
+              this.userSourceCoordinate = updateDataToUse
+      
+            } else {
+              // Handle the case where the data is not found in sessionStorage
+              console.log('No shared data found for source.');
+            }
+
+      const updatedDestinationCoordData = sessionStorage.getItem('destinationCoordinate');
+
+      if(updatedDestinationCoordData){
+        const updateDestinationCoordDataToUse = JSON.parse(updatedDestinationCoordData);
+
+        this.userDestinationCoordinate = updateDestinationCoordDataToUse
+
+
+
+      }else {
+              // Handle the case where the data is not found in sessionStorage
+              console.log('No shared data found for destination.');
+          }
 
     },
       getGpsLocationCoord(){
@@ -93,14 +133,21 @@ export default {
   mounted(){
     this.getGpsLocationCoord();
     this.getDatabaseLocationData();
-    console.log(this.destinationCoord)
 
-    if(this.destinationCoord & this.userSourceCoordinate){
-      this.path.push(this.destinationCoord);
-      this.path.push(this.userSourceCoordinate)
-    };
+    console.log(this.dbLocationData)
+    console.log(this.dbLocationData)
+    console.log(this.dbLocationData)
+    console.log(this.dbLocationData)
+    console.log(this.dbLocationData)
+    console.log(this.dbLocationData)
+    console.log(this.dbLocationData)
+    console.log(this.dbLocationData)
+    console.log(this.dbLocationData)
+    console.log(this.dbLocationData)
+    console.log(this.dbLocationData)
+    
 
-    console.log(this.path)
+
 
   }
 }
@@ -119,9 +166,41 @@ export default {
 
     <GMapCluster>
 
-      <GMapPolyline :path="path" :editable="true" ref="polyline" />
-      <GMapMarker :key="index"  :position="this.userSourceCoordinate" :clickable="true" @click="center = this.userSourceCoordinate" />
+ 
 
+      <GMapMarker :key="manualIndex"  :position="this.userSourceCoordinate" :clickable="true" @click="openMarker1(1)">
+        
+        <GMapInfoWindow :closeclick="true" @closeclick="openMarker1(null)" :opened="openedMarkerID1 === 1" >
+
+          <div class="card" style="width: 18rem;">
+          <img src="" class="card-img-top" alt="">
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">I am in info window 1 </p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+          </div>
+        </div>
+        
+          <p>{{userSourceCoordinate}}</p>
+        </GMapInfoWindow>
+
+      </GMapMarker>
+
+      <GMapMarker :key="manualIndex2" :position="this.userDestinationCoordinate" :clickable="true"  @click="openMarker2(2)">
+
+        <GMapInfoWindow :closeclick="true" @closeclick="openMarker2(null)" :opened="openedMarkerID2 === 2" >
+          <div class="card" style="width: 18rem;">
+          <img src="" class="card-img-top" alt="">
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">I am in info window 1  </p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+          </div>
+        </div>
+          <p>{{ userDestinationCoordinate }}</p>
+        </GMapInfoWindow>
+
+      </GMapMarker>
 
     </GMapCluster>
 

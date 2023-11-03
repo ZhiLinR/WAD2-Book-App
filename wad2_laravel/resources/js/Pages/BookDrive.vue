@@ -7,6 +7,7 @@
     import axios from 'axios';
     import GoogleMapLoader from '@/Components/GoogleMapLoader.vue';
     import PrimaryButton from '@/Components/PrimaryButton.vue';
+    import { ref } from 'vue'
     const BASE_URL = import.meta.env.VITE_APP_URL;
     </script>
 
@@ -22,7 +23,7 @@
                 sourceText:null,
                 sourceAutocomplete:null,
 
-                destinationText:null,
+                destinationText:'',
                 closestDistance:null,
 
                 searchedSourceCoordinates:null,
@@ -151,6 +152,15 @@
                                         }
                                 });
 
+                            //console.log(this.sourceCoordinate);
+                                        
+                           
+                            if(this.sourceCoordinate){
+                                sessionStorage.setItem('updateSourceCoordinate', JSON.stringify(this.sourceCoordinate));
+                                //console.log(this.sourceCoordinate)
+                            }
+                            
+                                
 
 
                                 //find closest bookstore destination coord
@@ -164,7 +174,7 @@
                                 const geocoder2 = new google.maps.Geocoder();
                                 geocoder2.geocode({ 'location': this.destinationCoordinates }, (results, status) => {
                                     if (status === 'OK' && results[0]) {
-
+                                        
                                         // v-model and display to the text box
                                         this.destinationText = results[0].formatted_address; // Set destinationLocation to the formatted address
                                         console.log(this.destinationText)
@@ -174,28 +184,36 @@
 
                                 });
 
-                                if(this.destinationCoordinates){
+                            if(this.destinationCoordinates){
                             //pass on to GoogleMapLoader.Vue if gpsLocation is set
                             sessionStorage.setItem('destinationCoordinate', JSON.stringify(this.destinationCoordinates));
                             console.log(this.destinationCoordinates)
                         }
+
+                        this.$refs.mapChild.getUpdatedSourceCoordAndDestinationCoord();
 
             },
             
             //math formula to find the shortest distance between two coords
             
             findNearestBookStore(userCoord){
-                let nearestBookstoreCoord = null;
+                
+                let nearestBookstoreCoord = null; //store the neearest loc
                 let nearestDistance = Number.MAX_VALUE;
-
+                console.log(this.storeDBlocationJson)
+                
                 this.storeDBlocationJson.forEach(dataInside=>{
-                    const DBLocationCoord = dataInside.location;
-                    this.haverSine(userCoord, DBLocationCoord);
+                    console.log(userCoord)              //location
+                    console.log(dataInside.location)    //nearest location
 
-                    if(this.closestDistance <nearestDistance){
-                        nearestBookstoreCoord = dataInside.location;
+                    this.haverSine(userCoord, dataInside.location);
+
+                    if(this.closestDistance < nearestDistance){
+                        nearestBookstoreCoord = dataInside.location; 
+                        nearestDistance = this.closestDistance;
                     }
-
+                    console.log(this.closestDistance) //the distance between location and nearest location
+                    console.log(nearestDistance)
 
                     
                 })
@@ -241,7 +259,6 @@
 
 
         },
-        
         beforeMount() {
             this.getUserDonations();
         
@@ -249,19 +266,15 @@
         mounted(){
             this.getAndSendDBLocationData();
             this.GetGpsLocationCoordAndSetSourceTextOnLoad();
-            
+            this.autoCompleteSource();
 
-
-    
-
-    
         }
     };
 
 
 
 
-
+//:destinationCoord="destinationCoordinates"
 
 
     </script>
@@ -276,21 +289,22 @@
                 <div class="form-group">
                         <h2>Source location:</h2>
                         <!--v if to ensure the sourceText get loaded first-->
-                        <input  type="text" v-if="GetGpsLocationCoordAndSetSourceTextOnLoad" class="form-control" placeholder="Source Location" id="source" v-model="this.sourceText">
+                        <input  type="text" class="form-control" placeholder="Source Location" id="source" v-model="this.sourceText" />
                 </div>
 
 
                 <div class="form-group">
                         <h2>Nearest bookdrive:</h2>
-                        <input type="text"  class="form-control" placeholder="Destination Location" id="destination" v-model="this.destinationText">
+                        <input type="text"  class="form-control" placeholder="Destination Location" id="destination" v-model="destinationText" />
+                        
                 </div>
 
 
-                    <button class="btn btn-primary" @click="setDestinationTextAndSendDestinationCoord" >Get Direction</button>
+                    <button class="btn btn-primary" @click="setDestinationTextAndSendDestinationCoord()" >Get Direction</button>
                     
 
-
-                <GoogleMapLoader :destinationCoord="destinationCoordinates">
+                    
+                <GoogleMapLoader ref="mapChild">
 
         
             
