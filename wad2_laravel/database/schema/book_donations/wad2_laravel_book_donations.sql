@@ -37,7 +37,7 @@ CREATE TABLE `book_donations` (
 
 LOCK TABLES `book_donations` WRITE;
 /*!40000 ALTER TABLE `book_donations` DISABLE KEYS */;
-INSERT INTO `book_donations` VALUES ('Drive','{\"location\": { \"lat\": 1.4113778071603156, \"lng\": 103.90199046936547 },\"img\": \"./Img/images.jpeg\"}'),('Drive2','{\"location\": { \"lat\": 1.3031072955455285, \"lng\": 103.85408918610035 },\"img\": \"./Img/images.jpeg\"}');
+INSERT INTO `book_donations` VALUES ('Drive','{\"location\": { \"lat\": 1.3065396327671674, \"lng\": 103.85271589509796 },\"img\": \"/bookDrive/everNewBook.jpg\" , \"name\":\"Evernew Book Store\" , \"address\":\"19 Upper Dickson Rd, Singapore 207478\"}'),('Drive2','{\"location\": { \"lat\": 1.4101765417872338, \"lng\": 103.90165654237263 },\"img\": \"/bookDrive/timesWaterWay.jpeg\" , \"name\":\"Times Waterway Point\" , \"address\":\"BLOCK 313A Sumang Link, Singapore 821313\"} '),('Drive3','{\"location\": { \"lat\": 1.348962233921741, \"lng\": 103.84915239993461 },\"img\": \"/bookDrive/booksmen.jpeg\", \"name\":\"BooksMen\" , \"address\":\"HDB Bishan #01-410, 505D Bishan Street 11 (S)574505, Singapore 574505\"}');
 /*!40000 ALTER TABLE `book_donations` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -50,4 +50,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-11-03 11:41:16
+-- Dump completed on 2023-11-03 22:14:13
