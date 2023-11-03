@@ -8,7 +8,7 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import VueGoogleMaps from '@fawmi/vue-google-maps'
 //import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 
-import 'bootstrap/dist/css/bootstrap.css'
+//import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap';
 //import 'bootstrap-vue-next/dist/bootstrap-vue-next.css'
 
@@ -23,7 +23,7 @@ createInertiaApp({
             .use(ZiggyVue, Ziggy)
             .use(VueGoogleMaps, {
                 load: {
-                    key: 'AIzaSyCjjILLNwtXHcFQmQaoroOtZvWKGg7sHS0',
+                    key: import.meta.env.VITE_API_KEY,
                 },
                 autobindAllEvents: true,
             })

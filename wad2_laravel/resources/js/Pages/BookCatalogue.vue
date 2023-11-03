@@ -1,5 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import Card from '@/Components/Card.vue';
 import { Head } from '@inertiajs/vue3';
 import { Scene, SceneItem } from "scenejs";
 import { typing } from "@scenejs/effects";
@@ -25,11 +26,11 @@ export default {
     },
 
     //henry edit to make book readable
-    mounted(){
+    mounted() {
         loadGoogleBooks(() => {
             google.books.load();
         });
-        
+
     },
     //henry edit to make book readable
 
@@ -123,7 +124,7 @@ export default {
                     if (response.data.items) {
                         this.books = response.data.items.map(item => {
                             const volumeInfo = item.volumeInfo;
-                            console.log(item)
+                            //console.log(item)
                             return {
                                 id: item.id,
                                 title: volumeInfo.title,
@@ -155,89 +156,94 @@ export default {
         readBook(volumeId) {
             var viewer = new google.books.DefaultViewer(document.getElementById('viewerCanvas'));
             viewer.load(volumeId, this.alertNotFound);
-            console.log(viewer)
-            console.log(volumeId)
+            //console.log(viewer)
+            //console.log(volumeId)
         },
+        scrollToElement() {
+            const [el] = this.$refs.last;
+            if (el) {
+                el.scrollIntoView({ behavior: "smooth" });
+            }
 
-    },
-    mounted: async function () {
-        await this.getCategories();
-        await this.getAuthors();
+        },
+        mounted: async function () {
+            await this.getCategories();
+            await this.getAuthors();
 
-        //console.log(this.categories.length)
-        this.changeTyping(this.categories.concat(this.authors))
-    },
+            //console.log(this.categories.length)
+            this.changeTyping(this.categories.concat(this.authors))
+        },
+    }
 }
 </script>
 
 <template>
     <AuthenticatedLayout>
-        <div class="container">
-            <div class="row">
-                <div class="col">
-                    <div class="text-center">
-                        <h1 class="mx-auto">Venture into the realm of </h1>
-                        <div class="container">
-                            <span></span>
-                            <div class="cursor"></div>
-                        </div>
-                        <div class="row">
-                            <input type="text" class="form-control w-50 mx-auto m-2" v-model="input"
+
+        <div class="container-fluid position-absolute top-50 start-50 translate-middle" height="100%">
+
+            <div class="text-center">
+                <h1 class="mx-auto">Venture into the realm of </h1>
+                <div class="container">
+                    <span></span>
+                    <div class="cursor"></div>
+                </div>
+                <div class="container">
+                    <div class="row g-2 m-4 d-flex justify-content-center align-items-center">
+                        <div class="col-sm-12 col-lg-3">
+                            <input @keyup.enter="getBooks" type="text" class="form-control" v-model="input"
                                 placeholder="Book Title">
-
-                            <input type="text" class="form-control w-50 mx-auto m-2" v-model="input2" placeholder="Author">
                         </div>
-
-                        <div class="m-3">Free Books Only
-                            <input type="checkbox" v-model="freeOnly">
+                        <div class="col-sm-12 col-lg-3">
+                            <input @keyup.enter="getBooks" type="text" class="form-control" v-model="input2"
+                                placeholder="Author">
                         </div>
-
-                        <button type="submit" class="btn btn-primary m-2" @click="getBooks">Search</button>
-
-                        <h3>Results for "{{ input }}" by "{{ input2 }}"</h3>
                     </div>
-                </div>
-            </div>
+                    <div class="row g-2 m-2 d-flex justify-content-center">
+                        <div class="col-sm-6 col-lg-2">
+                            <p id="checkbox_text">Free Books Only <input type="checkbox" class="form-check-input mx-4"
+                                    v-model="freeOnly"> </p>
 
-
-            <div class="row">
-
-                <div class="col-lg-4 order-lg-first">
-
-                    <div v-for="book in books" :key="book.id">
-                        <div class="row">
-                            <div class="col">
-                                <div class="card img-fluid">
-
-                                    <img :src="book.coverImage" alt="IMAGE NOT AVAILABLE" width="100">
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{ book.title }}</h5>
-
-                                        <div v-if="book.embedded">
-                                            <button v-on:click="readBook(book.id)" class="btn btn-outline-danger my-2">Read
-                                                Here</button>
-                                        </div>
-
-                                        <p class="card-text">Author: {{ book.author }}</p>
-                                        <p class="card-text">Genre: {{ book.category }}</p>
-                                        <p class="card-text">ISBN: {{ book.isbn }}</p>
-                                        <p class="card-text">ID: {{ book.id }}</p>
-                                        <p class="card-text">Published Year: {{ book.publishedYear }}</p>
-                                    </div>
-                                </div>
-                            </div>
-
+                        </div>
+                        <div class="col-sm-6 col-lg-1" hidden>
+                            <button type="submit" id="btn_search" class="btn btn-primary" @click="getBooks">Search</button>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-lg-8 order-md-first">
-                    <div id="viewerCanvas" style="width: 100%; height: 100%"></div>
-                </div>
 
+                <!-- <h3>Results for "{{ input }}" by "{{ input2 }}"</h3> -->
             </div>
 
         </div>
+        <div ref="last" class="container row d-flex justify-content-evenly g-2" height="100%" hidden>
+
+            <Card :imgSrc="book.coverImage" v-for="book in books" :key="book.id">
+                <template v-slot:cardTitle>{{ book.title }}</template>
+                <template v-slot:cardText>
+                    <p class="card-text">
+                        Author: {{ book.author }} <br>
+                        Genre: {{ book.category }} <br>
+                        Published Year: {{ book.publishedYear }} <br>
+                    </p>
+
+                    <p hidden>ID: {{ book.id }}</p>
+                    <p class="card-text fw-light"><small>ISBN: {{ book.isbn }}</small></p>
+                </template>
+                <template v-slot:btnRead>
+                    <div v-if="book.embedded">
+                        <button v-on:click="readBook(book.id)" class="btn btn-primary">Read</button>
+                    </div>
+                </template>
+            </Card>
+            <div class="col-lg-8 order-md-first">
+                <div id="viewerCanvas" style="width: 100%; height: 100%"></div>
+            </div>
+
+        </div>
+
+
+       <!--  <button @click="scrollToElement">scroll to last</button> -->
 
     </AuthenticatedLayout>
 </template>
@@ -255,11 +261,21 @@ export default {
 }
 
 h1,
-span {
+span,
+#checkbox_text {
     -webkit-text-stroke: 0.3px #4B4B4B;
     color: #FFF !important;
     text-shadow: 2px 2px 2.5px rgba(0, 0, 0, 0.80);
     font-family: Patrick Hand SC;
 }
 
+#btn_search {
+    --bs-btn-border-radius: 10rem !important;
+    -webkit-text-stroke: 0.01rem #242424;
+    color: white;
+    background-color: rgba(255, 255, 255, 0.5);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.45);
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25) !important;
+    padding: 5px 30px;
+}
 </style>
