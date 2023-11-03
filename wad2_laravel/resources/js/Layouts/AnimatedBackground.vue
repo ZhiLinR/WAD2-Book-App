@@ -27,7 +27,7 @@ export default {
 </script>
 
 <template>
-    <div id="animatedBackground" class="min-vh-100 min-vw-100" :style="{ backgroundImage: 'url(' + this.currentBG + ')' }">
+    <div id="animatedBackground" class="min-vh-100 min-vw-100 " :style="{ backgroundImage: 'url(' + this.currentBG + ')' }">
         <slot />
     </div>
 </template>

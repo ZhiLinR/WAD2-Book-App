@@ -747,8 +747,6 @@ export default {
   
 </script>
 <template>
-    <Head title="Book Catalogue" />
-
     <AuthenticatedLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">Catalogue</h2>
@@ -820,9 +818,12 @@ export default {
                 <ul style="padding-left: 0px;">
                     <li> <a href="javascript:void(0)">
                             <br><span>Books</span></a>
-                        <ul id="item" v-html="result" v-on:click="openNav">
+                            <Transition name="fade" mode="out-in" appear>
+                                <ul id="item" v-html="result" v-on:click="openNav">
                         
-                        </ul>
+                                </ul>
+                            </Transition>
+                        
                     </li>
                 </ul>
             </div>
@@ -952,7 +953,7 @@ body {
 	background-color: #000;
 }
 
-a:hover{
+ a:hover[href="javascript:void(0)"]{
     background: #000000;
 	color: #000;
 	border: 1px solid #000000;
