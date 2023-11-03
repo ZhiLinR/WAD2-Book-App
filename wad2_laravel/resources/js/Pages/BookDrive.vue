@@ -18,7 +18,7 @@
                 user_donations: [],
                 storeDBlocation:[],
                 storeDBlocationJson:[],
-                gpsLocationCoordinate:null,
+                sourceCoordinate:null,
                 sourceText:null,
                 sourceAutocomplete:null,
 
@@ -70,47 +70,47 @@
                         throw err;
                     });
             },
-            sendSearchedSourceCoordinates(){
-                //geocode the source Text to get coord
-                const geocoder = new google.maps.Geocoder();
-                geocoder.geocode({ 'address': this.sourceText }, (results, status) => {
-                if (status === 'OK' && results[0]) {
-                    this.searchedSourceCoordinates = {
-                        lat: results[0].geometry.location.lat(),
-                        lng: results[0].geometry.location.lng()
-                    };
-                } else {
-                    console.error('Geocode was not successful for the destination address.');
-                }
+            // sendSearchedSourceCoordinates(){
+            //     //geocode the source Text to get coord
+            //     const geocoder = new google.maps.Geocoder();
+            //     geocoder.geocode({ 'address': this.sourceText }, (results, status) => {
+            //     if (status === 'OK' && results[0]) {
+            //         this.searchedSourceCoordinates = {
+            //             lat: results[0].geometry.location.lat(),
+            //             lng: results[0].geometry.location.lng()
+            //         };
+            //     } else {
+            //         console.error('Geocode was not successful for the destination address.');
+            //     }
 
-                if (this.searchedSourceCoordinates) {
-                    sessionStorage.setItem('searchedSourceCoordinate', JSON.stringify(this.searchedSourceCoordinates));
-                    console.log(this.searchedSourceCoordinates);
-                }
-            });
+            //     if (this.searchedSourceCoordinates) {
+            //         sessionStorage.setItem('searchedSourceCoordinate', JSON.stringify(this.searchedSourceCoordinates));
+            //         console.log(this.searchedSourceCoordinates);
+            //     }
+            // });
 
 
-            },
+            // },
             GetGpsLocationCoordAndSetSourceTextOnLoad(){
                 
                 if(navigator.geolocation){
                     navigator.geolocation.getCurrentPosition((position)=>{
-                        this.gpsLocationCoordinate={
+                        this.sourceCoordinate={
                             lat: position.coords.latitude,
                             lng: position.coords.longitude,
                         }
 
 
                         //if obtained GPS LOCATION
-                        if(this.gpsLocationCoordinate){
+                        if(this.sourceCoordinate){
                             //pass on to GoogleMapLoader.Vue if gpsLocation is set
-                            sessionStorage.setItem('GpsLocationCoordinate', JSON.stringify(this.gpsLocationCoordinate));
-                            console.log(this.gpsLocationCoordinate)
+                            sessionStorage.setItem('sourceCoordinate', JSON.stringify(this.sourceCoordinate));
+                            console.log(this.sourceCoordinate)
 
 
                             //convert coord to text
                             const geocoder = new google.maps.Geocoder();
-                            geocoder.geocode({ 'location': this.gpsLocationCoordinate }, (results, status) => {
+                            geocoder.geocode({ 'location': this.sourceCoordinate }, (results, status) => {
                                 if (status === 'OK' && results[0]) {
 
                                     // v-model and display to the text box
@@ -136,8 +136,25 @@
         
             },
             setDestinationTextAndSendDestinationCoord(){
+
+                                // onclick button , get new sourceText , convert to coord then pass
+                                const geocoder = new google.maps.Geocoder();
+                                geocoder.geocode({ 'address': this.sourceText }, (results, status) => {
+                                        if (status === 'OK' && results[0]) {
+                                        this.sourceCoordinate = {
+                                            lat: results[0].geometry.location.lat(),
+                                            lng: results[0].geometry.location.lng()
+                                        };
+
+                                        } else {
+                                        console.error('Geocode was not successful for the destination address.');
+                                        }
+                                });
+
+
+
                                 //find closest bookstore destination coord
-                                this.findNearestBookStore(this.gpsLocationCoordinate);
+                                this.findNearestBookStore(this.sourceCoordinate);
 
 
 
@@ -149,8 +166,8 @@
                                     if (status === 'OK' && results[0]) {
 
                                         // v-model and display to the text box
-                                        this.destinationText = results[0].formatted_address; // Set sourceLocation to the formatted address
-                                        
+                                        this.destinationText = results[0].formatted_address; // Set destinationLocation to the formatted address
+                                        console.log(this.destinationText)
                                         
                                         
                                     }
@@ -178,6 +195,9 @@
                     if(this.closestDistance <nearestDistance){
                         nearestBookstoreCoord = dataInside.location;
                     }
+
+
+                    
                 })
                 this.destinationCoordinates = nearestBookstoreCoord;
               

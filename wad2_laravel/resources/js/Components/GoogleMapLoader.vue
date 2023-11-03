@@ -7,7 +7,7 @@ export default {
   },
   data() {
     return {
-      GpsCoordinate:null,
+      userSourceCoordinate:null,
       center: null,
       dbLocationData: [],
       closestDistance:null,
@@ -46,13 +46,13 @@ export default {
     },
       getGpsLocationCoord(){
         //get gps coordinate pass from BookDrive.Vue
-        const GpsData = sessionStorage.getItem('GpsLocationCoordinate');
+        const GpsData = sessionStorage.getItem('sourceCoordinate');
             console.log(GpsData)
             
             if(GpsData){
               const GpsDataToUse = JSON.parse(GpsData);
               //update GPS COORD
-              this.GpsCoordinate = GpsDataToUse;
+              this.userSourceCoordinate = GpsDataToUse;
 
               // Now, GpsDataToUse contains the shared data
               console.log(GpsDataToUse);
@@ -95,12 +95,13 @@ export default {
     this.getDatabaseLocationData();
     console.log(this.destinationCoord)
 
-    if(this.destinationCoord & this.GpsCoordinate){
+    if(this.destinationCoord & this.userSourceCoordinate){
       this.path.push(this.destinationCoord);
-      this.path.push(this.GpsCoordinate)
+      this.path.push(this.userSourceCoordinate)
     };
 
     console.log(this.path)
+
   }
 }
 
@@ -114,12 +115,12 @@ export default {
 <template>
 
   
-  <GMapMap :center="this.GpsCoordinate" :zoom="15" map-type-id="terrain" style="width: 100%; height: 500px">
+  <GMapMap :center="this.userSourceCoordinate" :zoom="15" map-type-id="terrain" style="width: 100%; height: 500px">
 
     <GMapCluster>
 
       <GMapPolyline :path="path" :editable="true" ref="polyline" />
-      <GMapMarker :key="index"  :position="this.GpsCoordinate" :clickable="true" @click="center = this.GpsCoordinate" />
+      <GMapMarker :key="index"  :position="this.userSourceCoordinate" :clickable="true" @click="center = this.userSourceCoordinate" />
 
 
     </GMapCluster>
