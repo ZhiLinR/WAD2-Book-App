@@ -21,18 +21,22 @@ export default {
             nonfiction: null,
             publicPath: import.meta.env.BASE_URL,
             books: [],
-            read: this.getReadObj("fantasy_read"),
             fantasy_read:null,
             mystery_read:null,
             horror_read:null,
             romance_read:null,
-            nonfiction_read:null
+            nonfiction_read:null,
+            fantasy_desc:"Basically fairies, monsters and trolls. Every little kids wildest dreams and imaginations",
+            horror_desc:"Ghosts....... Lots of Ghosts.......... Dont read it at night.......",
+            mystery_desc:"Detectives and their elusive charms. However, cant really say the same about the people who read mystery books",
+            romance_desc:"Typical Romeo and Juliet. Every 15y/o teenage girls dream",
+            nonfiction_desc:"Books about the real world...... how boring",
         }
     },
     mounted() {
 
 
-        Promise.all([this.data,this.read]).then(result => {
+        Promise.all([this.data]).then(result => {
             this.fantasy = JSON.parse(result[0].fantasy_data)
             this.mystery = JSON.parse(result[0].mystery_data)
             this.romance = JSON.parse(result[0].romance_data)
@@ -51,16 +55,6 @@ export default {
             this.horror_read = JSON.parse(result[0].horror_read)
             this.romance_read = JSON.parse(result[0].romance_read)
             this.nonfiction_read = JSON.parse(result[0].nonfiction_read)
-            
-
-            // console.log(this.read)
-            // this.fantasy_read = JSON.parse(result[1].fantasy_read)
-            // this.mystery_read = JSON.parse(result[1].mystery_read)
-            // this.horror_read = JSON.parse(result[1].horror_read)
-            // this.romance_read = JSON.parse(result[1].romance_read)
-            // this.nonfiction_read = JSON.parse(result[1].nonfiction_read)
-
-
 
         })
 
@@ -68,6 +62,35 @@ export default {
 
     },
     methods: {
+        sameBookCheck(object,find){
+            var queue = [object]
+            while (queue.length > 0) {
+                
+
+                var check = queue.shift()
+                console.log(check.hasOwnProperty("left"))
+                var headChecker = check.head.replace("'", "")
+                var findChecker = find.replace("'", "")
+                var headChecker= headChecker.replace("-"," ")
+                var findChecker= findChecker.replace("-"," ")
+                console.log(headChecker)
+                console.log(findChecker)
+                
+                if (headChecker.toLowerCase() == findChecker.toLowerCase()){
+                    console.log("these to are equal")
+                    return true
+                }
+                else {
+                    if (check.hasOwnProperty("left")) {
+                        queue.push(check.left)
+                    }
+                    if (check.hasOwnProperty("right")) {
+                        queue.push(check.right)
+                    }
+                }
+                
+        }
+        return false},
 
 
         createTree(item, id) {
@@ -143,10 +166,6 @@ export default {
         
             console.log(node)
             if (node != false) {
-
-
-
-
                 const newurl = 'https://www.googleapis.com/books/v1/volumes';
             const searchTermSubject = identifier; //e.g fantasy
 
@@ -168,18 +187,17 @@ export default {
                     for (var arr of forty_data) {
                         let rating = arr.volumeInfo.averageRating
                         let word_count = arr.volumeInfo.title.length
-                        if (rating >= 4.0&& word_count<=25) {
+                        if (rating >= 4.0&& word_count<=20) {
                             thuyaArr.push(arr)
                         }
                     }
-
-                    // var recommendation=""
-                    // while(recommendation in )
-
+                    console.log(data)
+                    do{
                     let randomIndex = Math.floor(Math.random() * thuyaArr.length);
 
                     let recommendation = thuyaArr[randomIndex]
-                    var book_name =recommendation.volumeInfo.title
+                    var book_name =recommendation.volumeInfo.title}
+                    while(this.sameBookCheck(data,book_name))
                     node.left = { head: book_name };
                 node.right = { head: "Own reco" };
                 var sql = JSON.stringify(data);
@@ -234,7 +252,12 @@ export default {
 
             return axios.get(url)
                 .then(result => {
-                    return result.data[0];
+                    for (const key in result.data) {
+                        if (Object.hasOwnProperty.call(result.data, key)) {
+                            const element = result.data[key];
+                            return (element)
+                        }
+                    }
                 })
                 .catch(err => {
                     console.log('Error: ' + err);
@@ -244,25 +267,21 @@ export default {
 
 
         bfs(obj, find) {
-            var counter = 0
+           
             var queue = [obj]
             while (queue.length > 0) {
                 
 
                 var check = queue.shift()
-                console.log(check)
+                
                 var headChecker = check.head.replace("'", "")
                 var findChecker = find.replace("'", "")
                 var headChecker= headChecker.replace("-"," ")
                 var findChecker= findChecker.replace("-"," ")
-
-                console.log(headChecker)
-                console.log(findChecker)
-                
                 if (headChecker.toLowerCase() == findChecker.toLowerCase()) {
-                    counter ++
-                    console.log(counter)
-                    if (find == "Own Reco") {
+                    
+                    
+                    if (find == "Own reco") {
                         alert("This is an empty node")
                     }
                     else if (check.hasOwnProperty("left") || check.hasOwnProperty("right")) {
@@ -354,7 +373,22 @@ export default {
                         }
                         button.style.display = "none"
                         title.innerHTML = `${book}`
-                        desc.innerHTML = `Number of ${book} read: ${count}<br> Number of books till Animations: ${left}`
+                        if(book=="fantasy"){
+                            desc.innerHTML = this.fantasy_desc
+                        }
+                        else if(book=="mystery"){
+                            desc.innerHTML = this.mystery_desc
+                        }
+                        else if(book=="romance"){
+                            desc.innerHTML = this.romance_desc
+                        }
+                        else if(book=="horror"){
+                            desc.innerHTML = this.horror_desc
+                        }
+                        else if(book=="nonfiction"){
+                            desc.innerHTML = this.nonfiction_desc
+                        }
+                        
                         thumbnail.src = `/main/${book}.jpeg`
                     })
                     .catch(error => {
@@ -541,17 +575,19 @@ export default {
                     for (var arr of data) {
                         let rating = arr.volumeInfo.averageRating   
                         let word_count = arr.volumeInfo.title.length
-                        if ( rating >= 4.0&& word_count<=25) {
+                        if ( rating >= 4.0&& word_count<=20) {
                             thuyaArr.push(arr)
                         }
                     }
-
-                    console.log(thuyaArr)
-
+                    do{
+                        console.log("this is still inside the loop")
                     let randomIndex = Math.floor(Math.random() * thuyaArr.length);
-
                     let recommendation = thuyaArr[randomIndex]
                     var book_name =recommendation.volumeInfo.title
+                    console.log(book_name)}
+                    while(this.sameBookCheck(tree,book_name))
+                        console.log("this is outside the loop")
+
                     book_name = book_name.toLowerCase()
                     var target = "Own reco"
                 const replacement = {
@@ -576,7 +612,7 @@ export default {
         manualAdd(event){
             var title = event.target.parentNode.parentNode.getElementsByTagName("h5")[0].innerText
             var genre = document.getElementById("genre").value
-            this.updateReadList(genre,title)
+            this.updateReadListManual(genre,title)
             
             
         },
@@ -591,7 +627,43 @@ export default {
             })
                 .then((result) => {
                     var read = result.data
-                    console.log("test")
+                    var list = JSON.parse(read)
+                    var url = "/api/skilltree/update-read-object"
+                    list.push(title)
+                    list = JSON.stringify(list)
+                   
+                    axios.post(url, {
+                        genre: book_read,
+                        book: list
+                    })
+                        .then(response => {
+                            // this.addOwnReco(genre,title)
+                        })
+                        .catch(error => {
+                            console.log(error)
+                        })
+
+                }).catch((err) => {
+
+                });
+
+
+
+
+
+
+
+        },
+        updateReadListManual(genre1, title) {
+            var url = "/api/skilltree/get-read-object"
+            var title = title.toLowerCase()
+            var genre = genre1.toLowerCase()
+            var book_read = genre + "_read"
+            axios.post(url, {
+                genre: book_read
+            })
+                .then((result) => {
+                    var read = result.data
                     var list = JSON.parse(read)
                     var url = "/api/skilltree/update-read-object"
                     list.push(title)
@@ -762,7 +834,7 @@ export default {
     <input type="text" class="form-control w-50 mx-auto m-2"  placeholder="Author" id="author">
     <input type="text" class="form-control w-50 mx-auto m-2"  placeholder="Please key in either fantasy,mystery,romance,horror,nonfiction" id="genre">
     <button type="button" class="btn btn-primary m-2" @click="getBooks">Search</button>
-    <button type="button" class="btn btn-primary m-2" @click="check">tester</button>
+
     
         <!-- <input id ="bookname" type="text" class="form-control col-3" placeholder="Book Name" aria-label="Recipient's username" aria-describedby="basic-addon2">
         <input id ="author" type="text" class="form-control col-3" placeholder="Author" aria-label="Recipient's username" aria-describedby="basic-addon2">
@@ -932,7 +1004,11 @@ a:hover{
     transition: margin-left .5s;
     padding: 20px;
   }
-
+  #animatedBackground{
+    background-repeat: repeat-y;
+    height: 100% !important;
+    background-size: contain
+}
   /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
   @media screen and (max-height: 450px) {
     .sidenav {padding-top: 15px;}
