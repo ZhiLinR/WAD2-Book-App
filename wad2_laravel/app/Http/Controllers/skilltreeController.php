@@ -19,6 +19,7 @@ class SkilltreeController extends Controller
     public function getDatabaseObj(Request $request)
     {
         $books = DB::table('user_pref')->get()->where("username", $request->user()->email);
+        
         return $books;
     }
     public function updateFantasyObj(Request $request){
