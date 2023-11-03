@@ -5,12 +5,11 @@ import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
-import VueGoogleMaps from '@fawmi/vue-google-maps'
+import VueGoogleMaps from '@fawmi/vue-google-maps';
 //import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 
-import 'bootstrap/dist/css/bootstrap.css'
+//import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap';
-import '../css/custom_bootstrap.css';
 //import 'bootstrap-vue-next/dist/bootstrap-vue-next.css'
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';

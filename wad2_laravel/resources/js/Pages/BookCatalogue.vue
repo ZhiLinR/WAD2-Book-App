@@ -5,11 +5,12 @@ import { Head } from '@inertiajs/vue3';
 import { Scene, SceneItem } from "scenejs";
 import { typing } from "@scenejs/effects";
 import { onBeforeMount } from 'vue';
+import axios from 'axios';
 </script>
 
 <script>
 //henry edit to make book readable
-import { loadGoogleBooks } from '../bookreader';
+//import { loadGoogleBooks } from '../bookreader';
 //henry edit to make book readable
 
 export default {
@@ -23,14 +24,6 @@ export default {
             categories: [],
             authors: [],
         }
-    },
-
-    //henry edit to make book readable
-    mounted() {
-        loadGoogleBooks(() => {
-            google.books.load();
-        });
-
     },
     //henry edit to make book readable
 
@@ -159,21 +152,15 @@ export default {
             //console.log(viewer)
             //console.log(volumeId)
         },
-        scrollToElement() {
-            const [el] = this.$refs.last;
-            if (el) {
-                el.scrollIntoView({ behavior: "smooth" });
-            }
 
-        },
-        mounted: async function () {
-            await this.getCategories();
-            await this.getAuthors();
+    },
+    mounted: async function () {
+        await this.getCategories();
+        await this.getAuthors();
 
-            //console.log(this.categories.length)
-            this.changeTyping(this.categories.concat(this.authors))
-        },
-    }
+        //console.log(this.categories.length)
+        this.changeTyping(this.categories.concat(this.authors))
+    },
 }
 </script>
 
@@ -216,9 +203,9 @@ export default {
             </div>
 
         </div>
-        <div ref="last" class="container row d-flex justify-content-evenly g-2" height="100%" hidden>
+        <!-- <div ref="last" class="container row d-flex justify-content-evenly g-2" height="100%" hidden>
 
-            <Card :imgSrc="book.coverImage" v-for="book in books" :key="book.id">
+            <Card :imgSrc="book.coverImage" v-for="book in books" :key="book.id" hidden>
                 <template v-slot:cardTitle>{{ book.title }}</template>
                 <template v-slot:cardText>
                     <p class="card-text">
@@ -240,10 +227,10 @@ export default {
                 <div id="viewerCanvas" style="width: 100%; height: 100%"></div>
             </div>
 
-        </div>
+        </div> -->
 
 
-       <!--  <button @click="scrollToElement">scroll to last</button> -->
+        <!--  <button @click="scrollToElement">scroll to last</button> -->
 
     </AuthenticatedLayout>
 </template>
