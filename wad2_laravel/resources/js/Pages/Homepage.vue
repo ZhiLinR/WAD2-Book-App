@@ -16,9 +16,7 @@ import { Link } from '@inertiajs/vue3';
                     </span>
                 </Link>
             </div>
-            <GoogleMapLoader>
-                
-            </GoogleMapLoader>
+     
         </AuthenticatedLayout>
 
 </template>
