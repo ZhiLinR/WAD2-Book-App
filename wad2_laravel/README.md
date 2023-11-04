@@ -64,3 +64,24 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Github Link
+https://github.com/ZhiLinR/WAD2-Book-App
+
+## Setup Overview
+### Setup Prerequisite
+NodeJS LTS
+PHP8 (command line)
+Composer Package Manager 
+MySQl Local Instance Server 3306
+
+### Setup Instructions
+navigate to /database/schema/mysql-schema.sql for the full CREATE script and run the script (we used MySQL Workbench)
+run composer install
+run npm install
+
+cd to the wad2_laravel directory
+(In 2 separate terminals)
+run php artisan serve
+run npm run dev
+access the website at http://127.0.0.1:8000 you will be redirected to the login page

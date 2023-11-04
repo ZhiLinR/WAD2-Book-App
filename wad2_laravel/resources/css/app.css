@@ -10,7 +10,17 @@ html {
   font-size: 18px;
 }
 
-.floating {  
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.floating {
   animation-name: floating;
   animation-duration: 3s;
   animation-iteration-count: infinite;
@@ -18,11 +28,20 @@ html {
   margin-left: 30px;
   margin-top: 5px;
 }
-
-@keyframes floating {
-  0% { transform: translate(0,  0px); }
-  50%  { transform: translate(0, 15px); }
-  100%   { transform: translate(0, -0px); }    
+.btn {
+  color: white;
 }
 
+@keyframes floating {
+  0% {
+    transform: translate(0, 0px);
+  }
 
+  50% {
+    transform: translate(0, 15px);
+  }
+
+  100% {
+    transform: translate(0, -0px);
+  }
+}

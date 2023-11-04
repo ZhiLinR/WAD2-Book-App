@@ -216,23 +216,6 @@ export default {
             <!-- <h3>Results for "{{ input }}" by "{{ input2 }}"</h3> -->
         </div>
 
-        <!-- Modal -->
-        <div class="modal  fade" id="exampleModal" height="600px" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-fullscreen">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel" ></h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div id="viewerCanvas" style="height: 100%; width: 100%;"></div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
         <template v-if="displayBooks">
             <div ref="bookContainer" class="container row d-flex justify-content-evenly g-2" height="100%">
                 <Card :imgSrc="book.coverImage" v-for="book in books" :key="book.id">
@@ -242,20 +225,23 @@ export default {
                             Author: {{ book.author }} <br>
                             Genre: {{ book.category }} <br>
                             Published Year: {{ book.publishedYear }} <br>
-                            ID: {{ book.id }}
                         </p>
+
+                        <p hidden>ID: {{ book.id }}</p>
                         <p class="card-text fw-light"><small>ISBN: {{ book.isbn }}</small></p>
                     </template>
                     <template v-slot:btnRead>
                         <div v-if="book.embedded">
-                            <button v-on:click="readBook(book.id)" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" >Read</button>
+                            <button v-on:click="readBook(book.id)" class="btn btn-primary">Read</button>
+
                         </div>
                     </template>
                 </Card>
             </div>
         </template>
         <!--  <button @click="scrollToElement">scroll to last</button> -->
-
+        <div class="col-lg-8 order-md-first"></div>
+        <div id="viewerCanvas" style="width: 100%; height: 100%"></div>
     </AuthenticatedLayout>
 </template>
 

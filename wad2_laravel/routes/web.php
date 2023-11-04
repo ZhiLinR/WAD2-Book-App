@@ -31,6 +31,11 @@ Route::get('/catalogue', function () {
     return Inertia::render('BookCatalogue');
 })->name('catalogue');
 
+
+Route::get('/register', function () {
+    return Inertia::render('Register');
+})->name('register');
+
 //USER RESTRICTED ROUTES-------------------------------------------------------------
 //Dashboard
 Route::get('/home', function () {

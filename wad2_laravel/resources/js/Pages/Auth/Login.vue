@@ -102,9 +102,10 @@ const submit = () => {
                                     Forgot your password?
                                     </Link>
                                 </div>
-
-                                <p class="mb-5" style="color: #393f81;">Don't have an account? <a href="register.html"
-                                        style="color: #393f81;">Register here</a></p>
+                                <Link :href="route('register')" class="link-secondary mb-5" style="color: #393f81;">
+                                    Don't have an account? Register here
+                                    </Link>
+                                    
 
                             </form>
                         </div>

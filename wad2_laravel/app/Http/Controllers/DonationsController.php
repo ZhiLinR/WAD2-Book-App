@@ -44,8 +44,8 @@ class DonationsController extends Controller
 
     public function getCategories(Request $request)
     {
-        $categories = DB::table('book_donations')->distinct()->select('category')->get();
-        return $categories;
+        //$categories = DB::table('book_donations')->distinct()->select('category')->get();
+        return ["Fantasy","Mystery","Non-Fiction","Horror","Romance"];
     }
 
     public function getAuthors(Request $request)

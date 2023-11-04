@@ -12,7 +12,7 @@ import VueGoogleMaps from '@fawmi/vue-google-maps';
 import 'bootstrap';
 //import 'bootstrap-vue-next/dist/bootstrap-vue-next.css'
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName =  'BookQuest Laravel';
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
