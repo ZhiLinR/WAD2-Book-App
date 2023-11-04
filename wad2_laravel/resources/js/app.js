@@ -23,7 +23,7 @@ createInertiaApp({
             .use(ZiggyVue, Ziggy)
             .use(VueGoogleMaps, {
                 load: {
-                    key: import.meta.env.VITE_API_KEY,
+                    key: "AIzaSyCjjILLNwtXHcFQmQaoroOtZvWKGg7sHS0",
                 },
                 autobindAllEvents: true,
             })

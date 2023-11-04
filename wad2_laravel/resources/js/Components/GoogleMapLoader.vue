@@ -1,5 +1,3 @@
-
-
 <script>
 export default {
   // props: {
@@ -19,6 +17,9 @@ export default {
         manualIndex2:2,
         openedMarkerID1: null,
         openedMarkerID2: null,
+        destinationImage:null,
+        destinationName:null,
+        destinationAddress:null
 
       // markers: [
       //   {
@@ -53,7 +54,7 @@ export default {
         
       }
     }
-,
+,//call this function in BookDrive using REF MAPCHILD
     getUpdatedSourceCoordAndDestinationCoord(){
       console.log("in getUpdated")
       const updatedSourceCoordData = sessionStorage.getItem('updateSourceCoordinate');
@@ -77,11 +78,54 @@ export default {
         this.userDestinationCoordinate = updateDestinationCoordDataToUse
 
 
+   
+
+        
+        this.dbLocationData.forEach((dataInside) => {
+          // Your code here...
+          console.log(this.userDestinationCoordinate)
+          console.log(dataInside.location);
+          console.log('Inside the if block');
+          if (this.userDestinationCoordinate.lat == dataInside.location.lat) {
+          console.log('Print something')
+          this.destinationName = dataInside.name;
+          this.destinationImage = dataInside.img;
+          this.destinationAddress = dataInside.address;
+  
+          
+          }
+
+
+
+        });
+
+        console.log(this.dbLocationData);
+        console.log(this.dbLocationData);
+        console.log(this.dbLocationData);
+        console.log(this.dbLocationData);
+        console.log(this.dbLocationData);
+
+
+        console.log(this.userDestinationCoordinate)
+        console.log(this.userDestinationCoordinate);
+        console.log(this.userDestinationCoordinate);
+        console.log(this.userDestinationCoordinate);
+        console.log(this.userDestinationCoordinate);
+        console.log(this.userDestinationCoordinate);
+        console.log(this.userDestinationCoordinate);
 
       }else {
               // Handle the case where the data is not found in sessionStorage
               console.log('No shared data found for destination.');
           }
+
+
+
+
+          console.log(this.destinationName);
+          console.log(this.destinationImage);
+          console.log(this.destinationAddress);
+
 
     },
       getGpsLocationCoord(){
@@ -134,17 +178,7 @@ export default {
     this.getGpsLocationCoord();
     this.getDatabaseLocationData();
 
-    console.log(this.dbLocationData)
-    console.log(this.dbLocationData)
-    console.log(this.dbLocationData)
-    console.log(this.dbLocationData)
-    console.log(this.dbLocationData)
-    console.log(this.dbLocationData)
-    console.log(this.dbLocationData)
-    console.log(this.dbLocationData)
-    console.log(this.dbLocationData)
-    console.log(this.dbLocationData)
-    console.log(this.dbLocationData)
+  
     
 
 
@@ -190,10 +224,10 @@ export default {
 
         <GMapInfoWindow :closeclick="true" @closeclick="openMarker2(null)" :opened="openedMarkerID2 === 2" >
           <div class="card" style="width: 18rem;">
-          <img src="" class="card-img-top" alt="">
+          <img src="{{ this.destinationImage }}" class="card-img-top" alt="">
           <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <p class="card-text">I am in info window 1  </p>
+            <h5 class="card-title">{{this.destinationName}}</h5>
+            <p class="card-text"> {{ this.destinationAddress }} </p>
             <a href="#" class="btn btn-primary">Go somewhere</a>
           </div>
         </div>
