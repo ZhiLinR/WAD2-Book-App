@@ -26,7 +26,10 @@ export default {
         SourceText:null,
         userMarkerIconImagePath:"/bookDrive/location.png",
                 destinationMarkerIconImagePath:"/bookDrive/book.png",
-                path:null
+                path:null,
+                typeOfTravelMode: 'DRIVING',
+                directionsRenderer:null,
+                directionsService:null
   
 
 
@@ -116,10 +119,10 @@ export default {
 
         });
 
-
+        this.getTravelMode();
         this.calculateAndDisplayRoute(this.userSourceCoordinate,this.userDestinationCoordinate);
 
-
+        
         console.log(this.dbLocationData);
         console.log(this.dbLocationData);
         console.log(this.dbLocationData);
@@ -184,38 +187,85 @@ export default {
       calculateAndDisplayRoute(sourceCoordinate, destinationCoordinates) {
 
 
-          let directionsService = new google.maps.DirectionsService();
-          let directionsRenderer = new google.maps.DirectionsRenderer();
+          this.directionsService = new google.maps.DirectionsService();
+          this.directionsRenderer = new google.maps.DirectionsRenderer();
+
+        
+
+          
 
           let request = {
           origin: new google.maps.LatLng(sourceCoordinate.lat, sourceCoordinate.lng),
           destination: new google.maps.LatLng(destinationCoordinates.lat, destinationCoordinates.lng),
-          travelMode: 'DRIVING' // You can change this to suit your needs (e.g., 'WALKING', 'BICYCLING')
+          travelMode:  this.typeOfTravelMode// You can change this to suit your needs (e.g., 'WALKING', 'BICYCLING')
           };
 
           console.log("Coordinate passed in",sourceCoordinate);
           console.log(destinationCoordinates);
 
-          directionsService.route(request, (result, status) => {
+          this.directionsService.route(request, (result, status) => {
           if (status === 'OK') {
 
             const map = this.$refs.googleMap.$mapObject; // Access the map instance ref to googleMap
-            directionsRenderer.setMap(map); // Attach the DirectionsRenderer to the map
+            this.directionsRenderer.setMap(map); // Attach the DirectionsRenderer to the map
 
-              //line options
-            directionsRenderer.setOptions({
-              suppressMarkers: true,
-              polylineOptions: {
-                strokeColor: "#2ab3a6",
-                strokeOpacity: 0.8,
-                strokeWeight: 5
-              }
-            });
+            if(this.typeOfTravelMode == "WALKING"){
+                    //line options
+                    this.directionsRenderer.setOptions({
+                    suppressMarkers: true,
+                    polylineOptions: {
+                      strokeColor: "Red",
+                      strokeOpacity: 0.8,
+                      strokeWeight: 5
+                    }
+                  });
+        
+
+            }else{
+                    //line options
+                    this.directionsRenderer.setOptions({
+
+
+                              
+                suppressMarkers: true,
+                polylineOptions: {
+                  strokeColor: "#2ab3a6",
+                  strokeOpacity: 0.8,
+                  strokeWeight: 5
+                }
+                });
+     
+            }
+
+         
 
               //render out the line
-              directionsRenderer.setDirections(result);
+              this.directionsRenderer.setDirections(result);
           }
           });
+      },
+
+      getTravelMode(){
+
+        if(sessionStorage.getItem('updateTravelMode')){
+          const updatedTravelModeData = sessionStorage.getItem('updateTravelMode');
+            console.log(updatedTravelModeData)
+            
+            if(updatedTravelModeData){
+
+              this.typeOfTravelMode = updatedTravelModeData
+      
+            } else {
+              // Handle the case where the data is not found in sessionStorage
+              console.log('No shared data found for source.');
+            }
+
+        }
+
+
+
+
+
       }
 
 
@@ -246,7 +296,7 @@ export default {
 <template>
 
   
-  <GMapMap :center="this.userSourceCoordinate" :zoom="15" map-type-id="terrain" style="width: 100%; height: 500px" ref="googleMap">
+  <GMapMap :center="this.userSourceCoordinate" :zoom="15" map-type-id="terrain" style="width: 100%; height: 450px" ref="googleMap">
 
 
 

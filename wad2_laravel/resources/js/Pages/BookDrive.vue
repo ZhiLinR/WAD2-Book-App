@@ -28,7 +28,8 @@
 
                 searchedSourceCoordinates:null,
                 destinationCoordinates:null,
-                path:null
+                path:null,
+                travelMode:"DRIVING"
 
             }
         },
@@ -239,7 +240,27 @@
                                 this.sourceText = place.formatted_address; // Set sourceText to the selected place's formatted address
                                 }
                             });
-            }
+            },
+            updateTravelModeWalking(){
+
+                this.travelMode = 'WALKING'
+                if(this.travelMode){
+                                sessionStorage.setItem('updateTravelMode', this.travelMode);
+                                
+                }
+                            console.log("Travelmode set to : ", this.travelMode)
+            },
+
+            updateTravelModeDriving(){
+
+                this.travelMode = 'DRIVING'
+                if(this.travelMode){
+                    sessionStorage.setItem('updateTravelMode', this.travelMode);
+                                
+                }
+                console.log("Travelmode set to : ", this.travelMode)
+
+}
 
 
 
@@ -269,24 +290,29 @@
     <template>
         <Head title="Book Catalogue" />
         <AuthenticatedLayout>
-
-            <div class="container bg-white my-5 p-5 rounded-2">
-
+            
+            <div class="container p-5 bg-white rounded-2" >
+                <h1 style="text-align: center;">Closest Book Drive</h1>
+                <div class="container" style="display: flex; justify-content: center; align-items: center;">
+                    <img src="/bookDrive/bookIcon.gif" style="height: 100px;">
+                </div>
                 <div class="form-group">
-                        <h2>Source location:</h2>
+                        <h2 style="color:rgb(213, 116, 116)">Source location:</h2>
                         <!--v if to ensure the sourceText get loaded first-->
                         <input  type="text" class="form-control" placeholder="Source Location" id="source" v-model="this.sourceText" />
                 </div>
 
 
                 <div class="form-group">
-                        <h2>Nearest bookdrive:</h2>
+                        <h2 style="color:rgb(11, 215, 92)">Nearest bookdrive:</h2>
                         <input type="text"  class="form-control" placeholder="Destination Location" id="destination" v-model="destinationText" />
                         
                 </div>
-
-
-                    <button class="btn btn-primary" @click="setDestinationTextAndSendDestinationCoord()" >Get Direction</button>
+                    <button class="btn btn-success" @click="updateTravelModeDriving()" >DRIVING</button>
+                    <button class="btn btn-primary" @click="updateTravelModeWalking()" >WALKING</button>
+                    <button class="btn btn-info" @click="setDestinationTextAndSendDestinationCoord()" >Get Direction</button>
+                    <h2 style="color:rgb(6, 6, 6)">Travel Mode:</h2>
+                    <input  type="text" class="col-1" placeholder="Source Location" id="source" v-model="this.travelMode"  :style="{ color: travelMode === 'WALKING' ? 'red' : 'green' ,'border-radius': '10px'}"/>
                     
 
                     
