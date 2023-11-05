@@ -27,7 +27,8 @@
                 closestDistance:null,
 
                 searchedSourceCoordinates:null,
-                destinationCoordinates:null
+                destinationCoordinates:null,
+                path:null
 
             }
         },
@@ -72,27 +73,7 @@
                         throw err;
                     });
             },
-            // sendSearchedSourceCoordinates(){
-            //     //geocode the source Text to get coord
-            //     const geocoder = new google.maps.Geocoder();
-            //     geocoder.geocode({ 'address': this.sourceText }, (results, status) => {
-            //     if (status === 'OK' && results[0]) {
-            //         this.searchedSourceCoordinates = {
-            //             lat: results[0].geometry.location.lat(),
-            //             lng: results[0].geometry.location.lng()
-            //         };
-            //     } else {
-            //         console.error('Geocode was not successful for the destination address.');
-            //     }
-
-            //     if (this.searchedSourceCoordinates) {
-            //         sessionStorage.setItem('searchedSourceCoordinate', JSON.stringify(this.searchedSourceCoordinates));
-            //         console.log(this.searchedSourceCoordinates);
-            //     }
-            // });
-
-
-            // },
+  
             GetGpsLocationCoordAndSetSourceTextOnLoad(){
                 
                 if(navigator.geolocation){
@@ -193,6 +174,8 @@
 
                         this.$refs.mapChild.getUpdatedSourceCoordAndDestinationCoord();
 
+                        this.calculateAndDisplayRoute(this.sourceCoordinate, this.destinationCoordinates);
+
             },
             
             //math formula to find the shortest distance between two coords
@@ -259,6 +242,8 @@
             }
 
 
+
+
         },
         beforeMount() {
             this.getUserDonations();
@@ -305,7 +290,7 @@
                     
 
                     
-                <GoogleMapLoader ref="mapChild">
+                <GoogleMapLoader ref="mapChild" >
 
         
             

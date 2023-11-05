@@ -1,4 +1,7 @@
 <script>
+
+
+
 export default {
   // props: {
   //   destinationCoord: Object,
@@ -22,7 +25,8 @@ export default {
         destinationAddress:null,
         SourceText:null,
         userMarkerIconImagePath:"/bookDrive/location.png",
-                destinationMarkerIconImagePath:"/bookDrive/book.png"
+                destinationMarkerIconImagePath:"/bookDrive/book.png",
+                path:null
   
 
 
@@ -113,21 +117,8 @@ export default {
         });
 
 
+        this.calculateAndDisplayRoute(this.userSourceCoordinate,this.userDestinationCoordinate);
 
-        const directionsService = new google.maps.DirectionsService();
-
-
-        const request = {
-          origin: new google.maps.LatLng(this.userSourceCoordinate.lat, this.userSourceCoordinate.lng),
-          destination: new google.maps.LatLng(this.userDestinationCoordinate.lat, this.userDestinationCoordinate.lng),
-          travelMode: 'DRIVING' // You can change this to suit your needs (e.g., 'WALKING', 'BICYCLING')
-        };
-
-        directionsService.route(request, (result, status) => {
-          if (status === 'OK') {
-            this.path = result;
-          }
-        });
 
         console.log(this.dbLocationData);
         console.log(this.dbLocationData);
@@ -188,29 +179,45 @@ export default {
                 }
 
             });
+      },
+      // this function is responsible for drawing out the line from source to destination
+      calculateAndDisplayRoute(sourceCoordinate, destinationCoordinates) {
+
+
+          let directionsService = new google.maps.DirectionsService();
+          let directionsRenderer = new google.maps.DirectionsRenderer();
+
+          let request = {
+          origin: new google.maps.LatLng(sourceCoordinate.lat, sourceCoordinate.lng),
+          destination: new google.maps.LatLng(destinationCoordinates.lat, destinationCoordinates.lng),
+          travelMode: 'DRIVING' // You can change this to suit your needs (e.g., 'WALKING', 'BICYCLING')
+          };
+
+          console.log("Coordinate passed in",sourceCoordinate);
+          console.log(destinationCoordinates);
+
+          directionsService.route(request, (result, status) => {
+          if (status === 'OK') {
+
+            const map = this.$refs.googleMap.$mapObject; // Access the map instance ref to googleMap
+            directionsRenderer.setMap(map); // Attach the DirectionsRenderer to the map
+
+              //line options
+            directionsRenderer.setOptions({
+              suppressMarkers: true,
+              polylineOptions: {
+                strokeColor: "#2ab3a6",
+                strokeOpacity: 0.8,
+                strokeWeight: 5
+              }
+            });
+
+              //render out the line
+              directionsRenderer.setDirections(result);
+          }
+          });
       }
-      // findNearestBookStore(currentCoord){
-      //     if(sessionStorage.getItem('searchedSourceCoordinate')){
-      //     const sourceData = sessionStorage.getItem('searchedSourceCoordinate');
-      //         console.log(sourceData)
-              
-      //         if(sourceData){
-      //           const sourceDataToUse = JSON.parse(sourceData);
-      //           //update GPS COORD
-      //           this.searchedSourceCoord =sourceDataToUse;
 
-      //           // Now, GpsDataToUse contains the shared data
-      //           console.log(sourceDataToUse);
-      //           console.log(this.searchedSourceCoord);
-      //         } else {
-      //           // Handle the case where the data is not found in sessionStorage
-      //           console.log('No shared data found.');
-      //         }
-      //   }
-
-
-
-      // }
 
 
   }
@@ -239,10 +246,12 @@ export default {
 <template>
 
   
-  <GMapMap :center="this.userSourceCoordinate" :zoom="15" map-type-id="terrain" style="width: 100%; height: 500px">
+  <GMapMap :center="this.userSourceCoordinate" :zoom="15" map-type-id="terrain" style="width: 100%; height: 500px" ref="googleMap">
+
+
 
     <GMapCluster>
-
+      
  
 
       <GMapMarker :key="manualIndex"  :position="this.userSourceCoordinate" :clickable="true" @click="openMarker1(1)"  :icon="{url: userMarkerIconImagePath,scaledSize: { width: 30, height: 35 },labelOrigin: { x: 16, y: -10 }}" class="custom-marker">
