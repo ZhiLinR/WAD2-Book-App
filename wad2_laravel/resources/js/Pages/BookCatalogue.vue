@@ -1,10 +1,11 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import AnimatedBackground from '@/Layouts/AnimatedBackground.vue';
 import Card from '@/Components/Card.vue';
 import { Head } from '@inertiajs/vue3';
 import { Scene, SceneItem } from "scenejs";
 import { typing } from "@scenejs/effects";
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, ref, computed, reactive } from 'vue';
 import axios from 'axios';
 </script>
 
@@ -25,11 +26,16 @@ export default {
             authors: [],
             displayBooks: false,
             initialVH: 0,
-            initialVW: 0
+            initialVW: 0,
+            offsetTop: 0
         }
     },
-    //henry edit to make book readable
-
+    computed: {
+        getComputedHeight() {
+            let initialVH = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
+            return initialVH-this.offsetTop;
+        }
+    },
     methods: {
         getCategories() {
             return axios.get("https://api.openalex.org/authors?select=id,display_name")
@@ -135,7 +141,8 @@ export default {
 
                             };
                         });
-                        this.displayBooks = true;
+                        const bookDiv = document.getElementById("bookDiv");
+                        bookDiv.hidden = false;
                         this.scrollToBooks();
                     }
                     else {
@@ -174,18 +181,15 @@ export default {
 
         setInterval(await this.getAuthors(), 10000)
 
-        this.initialVW = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
-        this.initialVH = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
-
-        console.log(this.initialVW);
-        console.log(this.initialVH);
+        this.offsetTop = document.getElementById("test").offsetTop;
     },
 }
 </script>
 
 <template>
-    <AuthenticatedLayout height="100%">
-        <div class="text-center d-flex flex-column align-items-center justify-content-center" :height=this.initialVH>
+    <AuthenticatedLayout>
+        <div id="test" class="text-center d-flex flex-column align-items-center justify-content-center"
+            :style="{'height': `${getComputedHeight}px)`}">
             <h1 class="mx-auto">Venture into the realm of </h1>
             <div class="container">
                 <span id="typing"></span>
@@ -213,47 +217,53 @@ export default {
                     </div>
                 </div>
             </div>
-            <!-- <h3>Results for "{{ input }}" by "{{ input2 }}"</h3> -->
+
         </div>
 
         <!-- Modal -->
-        <div class="modal  fade" id="exampleModal" height="600px" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal  fade" id="exampleModal" height="600px" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog modal-fullscreen">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel" ></h5>
+                        <h5 class="modal-title" id="exampleModalLabel"></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div id="viewerCanvas" style="height: 100%; width: 100%;"></div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
         </div>
-        <template v-if="displayBooks">
-            <div ref="bookContainer" class="container row d-flex justify-content-evenly g-2" height="100%">
-                <Card :imgSrc="book.coverImage" v-for="book in books" :key="book.id">
-                    <template v-slot:cardTitle>{{ book.title }}</template>
-                    <template v-slot:cardText>
-                        <p class="card-text">
-                            Author: {{ book.author }} <br>
-                            Genre: {{ book.category }} <br>
-                            Published Year: {{ book.publishedYear }} <br>
-                            ID: {{ book.id }}
-                        </p>
-                        <p class="card-text fw-light"><small>ISBN: {{ book.isbn }}</small></p>
-                    </template>
-                    <template v-slot:btnRead>
-                        <div v-if="book.embedded">
-                            <button v-on:click="readBook(book.id)" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" >Read</button>
-                        </div>
-                    </template>
-                </Card>
+
+        <div id="bookDiv" hidden>
+            <div class="d-flex flex-column align-items-center justify-content-center">
+                <div ref="bookContainer" class="container row d-flex justify-content-evenly g-2">
+                    <Card :imgSrc="book.coverImage" v-for="book in books" :key="book.id">
+                        <template v-slot:cardTitle>{{ book.title }}</template>
+                        <template v-slot:cardText>
+                            <p class="card-text">
+                                Author: {{ book.author }} <br>
+                                Genre: {{ book.category }} <br>
+                                Published Year: {{ book.publishedYear }} <br>
+                                ID: {{ book.id }}
+                            </p>
+                            <p class="card-text fw-light"><small>ISBN: {{ book.isbn }}</small></p>
+                        </template>
+                        <template v-slot:btnRead>
+                            <div v-if="book.embedded">
+                                <button v-on:click="readBook(book.id)" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal">Read</button>
+                            </div>
+                        </template>
+                    </Card>
+                </div>
             </div>
-        </template>
+
+        </div>
         <!--  <button @click="scrollToElement">scroll to last</button> -->
 
     </AuthenticatedLayout>

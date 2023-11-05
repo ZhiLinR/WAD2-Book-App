@@ -25,8 +25,8 @@ export default {
 
 <template>
     <AnimatedBackground>
-        <div style="max-height: inherit; max-height: 1000px;">
-            <nav class="navbar navbar-light navbar-expand-md">
+        <div>
+            <nav class="navbar navbar-light navbar-expand-md" id="topNav">
                 <div class="row align-items-center justify-content-between">
                     <div class="col p-2 bd-highlight">
                         <NavLink :href="route('homepage')" class="navbar-brand">
@@ -81,13 +81,6 @@ export default {
                 </div>
 
             </nav>
-            
-        <header class="" v-if="$slots.header">
-            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                <slot name="header" />
-            </div>
-        </header>
-
         <!-- Page Content -->
 
         <main>

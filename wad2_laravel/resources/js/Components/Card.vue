@@ -8,8 +8,8 @@ defineProps({
 })
 </script>
 <template>
-    <Transition name="fade" mode="out-in" appear>
-        <div class="card col-sm-12 col-lg-6 border-dark p-4" :class="{ 'floating-card': hover }" @mouseover="hover = true"
+    <Transition name="show" appear>
+        <div class="card col-sm-12 col-lg-6 p-4" :class="{ 'floating floating-card': hover }" @mouseover="hover = true"
             @mouseleave="hover = false" style="max-width: 540px; margin: 0.5rem;">
             <div class="row g-0">
                 <div class="col-4 d-flex align-items-center">
@@ -44,36 +44,25 @@ defineProps({
 
 <style>
 .card {
-    background-color: rgba(255, 255, 255, 0.9) !important;
+    background-color: rgba(255, 255, 255, 0.95) !important;
 }
 
 .card-body{
     border-radius: 0.1vw;
-    background-color: rgba(255, 255, 255, 1) !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+.show-enter-active,
+.show-leave-enter {
+    transform: translateX(0);
+    transition: all .3s linear;
+}
+.show-enter,
+.show-leave-to {
+    transform: translateX(100%);
 }
 
-
 .floating-card {
-    animation-name: floating;
-    animation-duration: 2s;
-    animation-iteration-count: infinite;
-    animation-timing-function: ease-in-out;
-    margin-left: 30px;
-    margin-top: 5px;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.55) !important;
 }
 
-@keyframes floating-card {
-    0% {
-        transform: translate(0, 5px);
-    }
-
-    50% {
-        transform: translate(0, 15px);
-    }
-
-    100% {
-        transform: translate(0, 5px);
-    }
-}
 </style>

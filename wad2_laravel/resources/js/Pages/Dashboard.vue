@@ -804,13 +804,6 @@ export default {
 </div>
 
 </div>
-            
-            
-
-            
-
-
-
     <div id="main">
     <div class="container-fluid">
         <div class="row">
@@ -1005,11 +998,6 @@ body {
     transition: margin-left .5s;
     padding: 20px;
   }
-  #animatedBackground{
-    background-repeat: repeat-y;
-    height: 100% !important;
-    background-size: contain
-}
   /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
   @media screen and (max-height: 450px) {
     .sidenav {padding-top: 15px;}

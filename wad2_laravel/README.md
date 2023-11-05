@@ -81,7 +81,5 @@ run composer install
 run npm install
 
 cd to the wad2_laravel directory
-(In 2 separate terminals)
 run php artisan serve
-run npm run dev
 access the website at http://127.0.0.1:8000 you will be redirected to the login page

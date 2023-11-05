@@ -8,14 +8,14 @@ export default {
     data() {
         return {
             currentBG: "/fantasy/background/fantasy1.gif",
-            backgrounds: ["/fantasy/background/fantasy1.gif", "/fantasy/background/fantasy2.gif", "/fantasy/background/fantasy3.gif"]
+            backgrounds: ["/fantasy/background/fantasy1.gif", "/fantasy/background/fantasy2.gif", "/fantasy/background/fantasy3.gif", "/mystery/background/mystery2.gif"],
         }
     },
     methods: {
         changeBG: function () {
             let bg = this
             setInterval(function () {
-                let index = Math.floor(Math.random() * 3)
+                let index = Math.floor(Math.random() * 4)
                 bg.currentBG = bg.backgrounds[index];
             }, 5000);
         }
@@ -27,7 +27,7 @@ export default {
 </script>
 
 <template>
-    <div id="animatedBackground" class="min-vh-100 min-vw-100 " :style="{ backgroundImage: 'url(' + this.currentBG + ')' }">
+    <div id="animatedBackground" class="min-vh-100 min-vw-100" :style="{ backgroundImage: 'url(' + this.currentBG + ')' }">
         <slot />
     </div>
 </template>
@@ -37,6 +37,8 @@ export default {
     background-color: #133758;
     transition: background-image 2s ease;
     background-repeat: repeat;
-    background-size: 100%;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
 }
 </style>
