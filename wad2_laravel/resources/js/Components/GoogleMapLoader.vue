@@ -19,16 +19,11 @@ export default {
         openedMarkerID2: null,
         destinationImage:null,
         destinationName:null,
-        destinationAddress:null
-
-      // markers: [
-      //   {
-      //     position: {
-      //       lat: 51.093048, lng: 6.842120
-      //     },
-      //   }
-      //   , // Along list of clusters
-      // ],
+        destinationAddress:null,
+        SourceText:null,
+        userMarkerIconImagePath:"/bookDrive/location.png",
+                destinationMarkerIconImagePath:"/bookDrive/book.png"
+  
 
 
     }
@@ -62,7 +57,7 @@ export default {
             
             if(updatedSourceCoordData){
               const updateDataToUse = JSON.parse(updatedSourceCoordData);
-              //update userSource COORD
+              //update userSource COORD to the new text that user typed
               this.userSourceCoordinate = updateDataToUse
       
             } else {
@@ -70,6 +65,24 @@ export default {
               console.log('No shared data found for source.');
             }
 
+
+
+
+            //convert coord to text
+            const geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ 'location': this.userSourceCoordinate }, (results, status) => {
+                if (status === 'OK' && results[0]) {
+
+                    // v-model and display to the text box
+                    this.SourceText = results[0].formatted_address; // Set sourceLocation to the formatted address
+                    
+                
+                    console.log(this.SourceText);
+                }
+
+            });
+
+            //update destination coord to the new text that user typed
       const updatedDestinationCoordData = sessionStorage.getItem('destinationCoordinate');
 
       if(updatedDestinationCoordData){
@@ -80,7 +93,7 @@ export default {
 
    
 
-        
+        // get the database location String JSON format data which consist of img , address , name of book drive
         this.dbLocationData.forEach((dataInside) => {
           // Your code here...
           console.log(this.userDestinationCoordinate)
@@ -97,6 +110,23 @@ export default {
 
 
 
+        });
+
+
+
+        const directionsService = new google.maps.DirectionsService();
+
+
+        const request = {
+          origin: new google.maps.LatLng(this.userSourceCoordinate.lat, this.userSourceCoordinate.lng),
+          destination: new google.maps.LatLng(this.userDestinationCoordinate.lat, this.userDestinationCoordinate.lng),
+          travelMode: 'DRIVING' // You can change this to suit your needs (e.g., 'WALKING', 'BICYCLING')
+        };
+
+        directionsService.route(request, (result, status) => {
+          if (status === 'OK') {
+            this.path = result;
+          }
         });
 
         console.log(this.dbLocationData);
@@ -145,6 +175,19 @@ export default {
               console.log('No shared data found.');
             }
 
+            //convert coord to text
+            const geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ 'location': this.userSourceCoordinate }, (results, status) => {
+                if (status === 'OK' && results[0]) {
+
+                    // v-model and display to the text box
+                    this.SourceText = results[0].formatted_address; // Set sourceLocation to the formatted address
+                    
+                
+                    console.log(this.SourceText);
+                }
+
+            });
       }
       // findNearestBookStore(currentCoord){
       //     if(sessionStorage.getItem('searchedSourceCoordinate')){
@@ -202,36 +245,39 @@ export default {
 
  
 
-      <GMapMarker :key="manualIndex"  :position="this.userSourceCoordinate" :clickable="true" @click="openMarker1(1)">
+      <GMapMarker :key="manualIndex"  :position="this.userSourceCoordinate" :clickable="true" @click="openMarker1(1)"  :icon="{url: userMarkerIconImagePath,scaledSize: { width: 30, height: 35 },labelOrigin: { x: 16, y: -10 }}" class="custom-marker">
         
+   
+
+
         <GMapInfoWindow :closeclick="true" @closeclick="openMarker1(null)" :opened="openedMarkerID1 === 1" >
 
           <div class="card" style="width: 18rem;">
           <img src="" class="card-img-top" alt="">
           <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <p class="card-text">I am in info window 1 </p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
+            <h5 class="card-title">Current Location:</h5>
+            <p class="card-text">{{this.SourceText}} </p>
+            
           </div>
         </div>
         
-          <p>{{userSourceCoordinate}}</p>
+          
         </GMapInfoWindow>
 
       </GMapMarker>
 
-      <GMapMarker :key="manualIndex2" :position="this.userDestinationCoordinate" :clickable="true"  @click="openMarker2(2)">
+      <GMapMarker :key="manualIndex2" :position="this.userDestinationCoordinate" :clickable="true" :icon="{url: destinationMarkerIconImagePath,scaledSize: { width: 30, height: 35 },labelOrigin: { x: 16, y: -10 }}"  @click="openMarker2(2)">
 
         <GMapInfoWindow :closeclick="true" @closeclick="openMarker2(null)" :opened="openedMarkerID2 === 2" >
           <div class="card" style="width: 18rem;">
-          <img src="{{ this.destinationImage }}" class="card-img-top" alt="">
+          <img :src="destinationImage" class="card-img-top" alt="">
           <div class="card-body">
             <h5 class="card-title">{{this.destinationName}}</h5>
             <p class="card-text"> {{ this.destinationAddress }} </p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
+            
           </div>
         </div>
-          <p>{{ userDestinationCoordinate }}</p>
+          
         </GMapInfoWindow>
 
       </GMapMarker>
@@ -244,3 +290,12 @@ export default {
 
 
 </template>
+
+
+<style>
+.custom-marker {
+  width: 40px; /* Customize the width as needed */
+  height: 40px; /* Customize the height as needed */
+  /* Other styling properties can be added here */
+}
+</style>

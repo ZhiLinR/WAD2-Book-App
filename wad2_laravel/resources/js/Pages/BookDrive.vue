@@ -28,6 +28,7 @@
 
                 searchedSourceCoordinates:null,
                 destinationCoordinates:null
+
             }
         },
         methods: {
@@ -109,19 +110,19 @@
                             console.log(this.sourceCoordinate)
 
 
-                            //convert coord to text
-                            const geocoder = new google.maps.Geocoder();
-                            geocoder.geocode({ 'location': this.sourceCoordinate }, (results, status) => {
-                                if (status === 'OK' && results[0]) {
+                                //convert coord to text
+                                const geocoder = new google.maps.Geocoder();
+                                geocoder.geocode({ 'location': this.sourceCoordinate }, (results, status) => {
+                                    if (status === 'OK' && results[0]) {
 
-                                    // v-model and display to the text box
-                                    this.sourceText = results[0].formatted_address; // Set sourceLocation to the formatted address
+                                        // v-model and display to the text box
+                                        this.sourceText = results[0].formatted_address; // Set sourceLocation to the formatted address
+                                        
                                     
-                                
-                                    console.log(this.sourceText);
-                                }
+                                        console.log(this.sourceText);
+                                    }
 
-                            });
+                                });
                             
 
                         }
@@ -316,3 +317,6 @@
         
         </AuthenticatedLayout>
     </template>
+
+
+
