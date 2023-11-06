@@ -3,13 +3,23 @@
 
 ## Techstack Quick Overview
 ### Frontend
-CSS Framework: Bootstrap 5
-JS Framework: Vue3 + InertiaJS Routing
-Animation Libraries: SceneJS
+#### Technologies
+
+- CSS Framework: Bootstrap 5 + SASS/SCSS file 
+- JS Framework: Vue3 + Vite + InertiaJS Routing
+- Animation Libraries: SceneJS
+
+#### APIs
+- Google Maps - Places API, Directions API
+- Google Books API
+- Google Fonts API - Patrick Hand SC
 
 ### Backend
+
 Laravel-Breeze Template 
-- Basic Authentication Library with automatically inbuilt Laravel Sanctum
+- Laravel PHP
+- Authentication Library with automatically inbuilt Laravel Sanctum
 
 ### Database
-MySQL
+
+- MySQL

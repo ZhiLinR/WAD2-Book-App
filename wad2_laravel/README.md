@@ -68,19 +68,22 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 ## Github Link
 https://github.com/ZhiLinR/WAD2-Book-App
 
+---
 ## Setup Overview
-### Setup Prerequisite
-NodeJS LTS
-PHP8 (command line)
-Composer Package Manager 
-MySQl Local Instance Server 3306
-
+### Setup Prerequisite (In Order)
+1. NodeJS LTS
+2. MySQl Local Instance Server 3306
+3. PHP8 (command line)
+- ensure that php.ini file has curl/fileinfo/mbstring/mysql/openssl/zip extensions enabled
+4. Composer Package Manager (Using PHP8)
+---
 ### Setup Instructions
-navigate to /database/schema/mysql-schema.sql for the full CREATE script and run the script (we used MySQL Workbench)
-run composer install
-run npm install
-
-cd to the wad2_laravel directory
-run php artisan serve
-run npm run dev
-access the website at http://127.0.0.1:8000 you will be redirected to the login page
+1. navigate to /database/schema/mysql-schema.sql for the full CREATE script and run the script (we used MySQL Workbench)
+2. run composer install
+3. run npm install
+---
+### Running Instructions
+1. cd to the wad2_laravel directory
+2. run php artisan serve
+3. run npm run dev
+4. access the website at http://127.0.0.1:8000 you will be redirected to the login page
