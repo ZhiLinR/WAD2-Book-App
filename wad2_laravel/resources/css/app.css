@@ -19,7 +19,11 @@ html {
 .fade-leave-to {
   opacity: 0;
 }
-
+.bi {
+  min-width: 60px;
+  min-height:60px;
+  color: white;
+}
 .floating {
   animation-name: floating;
   animation-duration: 3s;
