@@ -29,7 +29,6 @@
 
       google.books.setOnLoadCallback(initialize);
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjjILLNwtXHcFQmQaoroOtZvWKGg7sHS0&libraries=places,geocoding" ></script>
 
     <!-- Scripts -->
     @routes
