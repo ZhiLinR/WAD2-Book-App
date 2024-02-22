@@ -1,5 +1,12 @@
 # WAD2-Book-App for SMU
-## By Thuya, Jasper, Henry and Zhi Lin
+<img width="959" alt="Screenshot 2024-02-22 085704" src="https://github.com/ZhiLinR/WAD2-Book-App/assets/145460219/20194db1-ee82-4a62-bab6-d499ce565448">
+
+<img width="952" alt="image" src="https://github.com/ZhiLinR/WAD2-Book-App/assets/145460219/a0827001-80b6-4a0f-a3d3-7978358347b9">
+
+
+**Team Members:**
+Thuya, Henry, Jasper, Zhi Lin
+
 
 ## Techstack Quick Overview
 ### Frontend
@@ -23,3 +30,6 @@ Laravel-Breeze Template
 ### Database
 
 - MySQL
+
+**Website Video**
+https://youtu.be/bEcbRV4Oa6U
